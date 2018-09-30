@@ -1,4 +1,5 @@
 import React from 'react';
+import './CursorComponent.css';
 
 import { renderItemStack } from './ItemRenderer.js';
 
@@ -18,11 +19,7 @@ class CursorComponent extends React.Component
     const maxItemSize = 96;
     return <svg className="cursoritem"
     width={maxItemSize} height={maxItemSize}
-    style={{
-      position: "fixed",
-      pointerEvents: "none",
-      left: x, top: y
-    }}>
+    style={{left: x, top: y}}>
     {
       renderItemStack(src)
     }

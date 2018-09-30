@@ -1,0 +1,4 @@
+.cursoritem {
+  position: fixed;
+  pointer-events: none;
+}
