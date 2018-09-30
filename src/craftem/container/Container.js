@@ -6,7 +6,6 @@ class Container
     this._height = height;
 
     this._slots = new Array(width * height);
-    this._slotItems = [];
   }
 
   clear()
@@ -15,8 +14,6 @@ class Container
     {
       this._slots[i] = undefined;
     }
-
-    this._slotItems.length = 0;
   }
 
   addItemStack(itemStack, slotIndex=0, replace=false)//, autofill=false)
@@ -113,7 +110,6 @@ class Container
     const result = replacedSlot ? this.removeItemStack(replacedSlot.index) : null;
     slot = {itemStack: itemStack, index: slotIndex};
 
-    this._slotItems.push(slot);
     for(let i = 0; i < itemWidth; ++i)
     {
       for(let j = 0; j < itemHeight; ++j)
@@ -161,7 +157,6 @@ class Container
           }
         }
 
-        this._slotItems.splice(this._slotItems.indexOf(slot), 1);
         return itemStack;
       }
       else
@@ -207,7 +202,7 @@ class Container
 
   getSlots()
   {
-    return this._slotItems;
+    return this._slots;
   }
 
   getWidth()
