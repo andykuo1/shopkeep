@@ -1,0 +1,19 @@
+.itemcontainer {
+  background: lightgray;
+}
+
+.itemslot {
+  fill: white;
+  opacity: 0;
+  outline: 1px solid black;
+  outline-offset: -1px;
+}
+
+.itemslot:hover {
+  opacity: 1;
+}
+
+.itemstack {
+  fill: blue;
+  pointer-events: none;
+}
