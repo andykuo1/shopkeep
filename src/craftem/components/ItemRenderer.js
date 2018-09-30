@@ -6,9 +6,15 @@ export function renderItemStack(itemStack, x=0, y=0, slotWidth=32, slotHeight=32
   if (!(itemStack instanceof ItemStack)) return null;
 
   const item = itemStack.getItem();
-  return <rect key={itemStack.getID()} className="itemstack"
-    x={x + padding}
-    y={y + padding}
-    width={slotWidth * item.getWidth() - (padding * 2)}
-    height={slotHeight * item.getHeight() - (padding * 2)}/>;
+  const left = x + padding;
+  const top = y + padding;
+  const width = slotWidth * item.getWidth() - (padding * 2);
+  const height = slotHeight * item.getHeight() - (padding * 2);
+  return <g key={itemStack.getID()} className="itemstack">
+    <rect className="itemstack-item"
+      x={left} y={top}
+      width={width} height={height}/>
+    <text className="itemstack-size"
+      x={left + width - padding} y={top + height - padding}>{itemStack.getStackSize()}</text>
+  </g>;
 };

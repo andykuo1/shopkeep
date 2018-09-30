@@ -6,6 +6,8 @@ class Item
 
     this._width = 1;
     this._height = 1;
+
+    this._maxStackSize = 1;
   }
 
   setSize(width=1, height=1)
@@ -18,6 +20,12 @@ class Item
     return this;
   }
 
+  setMaxStackSize(stackSize)
+  {
+    this._maxStackSize = stackSize;
+    return this;
+  }
+
   getWidth()
   {
     return this._width;
@@ -26,6 +34,11 @@ class Item
   getHeight()
   {
     return this._height;
+  }
+
+  getMaxStackSize()
+  {
+    return this._maxStackSize;
   }
 
   getName()

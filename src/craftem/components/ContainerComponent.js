@@ -33,7 +33,7 @@ class ContainerComponent extends React.Component
   renderContainerItems(container, slotWidth, slotHeight)
   {
     const containerWidth = container.getWidth();
-    return container.getSlotItems().map((e, i) => {
+    return container.getSlots().map((e, i) => {
       const index = e.index;
       return renderItemStack(e.itemStack,
         (index % containerWidth) * slotWidth,

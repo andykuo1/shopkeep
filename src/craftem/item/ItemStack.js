@@ -10,6 +10,12 @@ class ItemStack
     this._metadata = metadata;
   }
 
+  copy()
+  {
+    const result = new ItemStack(this._item, this._stackSize, this._metadata);
+    return result;
+  }
+
   setItem(item)
   {
     this._item = item;
@@ -18,6 +24,11 @@ class ItemStack
   getItem()
   {
     return this._item;
+  }
+
+  addStackSize(stackSize)
+  {
+    this._stackSize += stackSize;
   }
 
   setStackSize(stackSize)

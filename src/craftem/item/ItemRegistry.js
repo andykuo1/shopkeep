@@ -1,5 +1,3 @@
-import Item from './Item.js';
-
 const ITEMS = new Map();
 
 class ItemRegistry
