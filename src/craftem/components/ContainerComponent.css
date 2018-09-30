@@ -1,9 +1,17 @@
 .itemcontainer {
-  background: lightgray;
+  background: none;
+}
+
+.itemcontainer-title {
+  fill: black;
+  font-family: sans-serif;
+  font-size: 14px;
+
+  text-anchor: start;
 }
 
 .itemslot {
-  fill: white;
+  fill: lightgray;
   opacity: 0;
   outline: 1px solid black;
   outline-offset: -1px;

@@ -1,0 +1,12 @@
+.player-inventory {
+  margin: 5px;
+}
+
+.player-crafting {
+  margin: 5px;
+}
+
+.itemresult {
+  margin: 5px;
+  border: 1px dashed black;
+}

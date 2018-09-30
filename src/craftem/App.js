@@ -7,6 +7,8 @@ import { guid } from 'util/MathHelper.js';
 import ContainerComponent from 'craftem/components/ContainerComponent.js';
 import CursorComponent from 'craftem/components/CursorComponent.js';
 
+import * as ItemRenderer from 'craftem/components/ItemRenderer.js';
+
 import Container from 'craftem/container/Container.js';
 
 import CraftingRegistry from 'craftem/crafting/CraftingRegistry.js';
@@ -36,6 +38,7 @@ class App extends React.Component
     super(props);
 
     this.equippedItem = new ItemStack(ItemRegistry.getItem("oilFlask"));
+    this.resultItem = null;
     this.cursorX = 0;
     this.cursorY = 0;
 
@@ -45,7 +48,7 @@ class App extends React.Component
     this.container.addItemStack(new ItemStack(ItemRegistry.getItem("oakLog")), 2);
     this.container.addItemStack(new ItemStack(ItemRegistry.getItem("oakWood")), 5);
     this.container.addItemStack(new ItemStack(ItemRegistry.getItem("toughFiber")), 6);
-    this.container.addItemStack(new ItemStack(ItemRegistry.getItem("toughFiber")), 7);
+    this.container.addItemStack(new ItemStack(ItemRegistry.getItem("toughFiber"), 10), 7);
 
     this.crafting = new Container(5, 5);
 
@@ -78,7 +81,19 @@ class App extends React.Component
     }
     else
     {
-      this.equippedItem = container.removeItemStack(slotIndex);
+      this.equippedItem = container.removeItemStack(slotIndex, 1);
+    }
+
+    this.resultItem = null;
+    const recipes = CraftingRegistry.getRecipes();
+    for(let recipe of recipes)
+    {
+      const usedSlots = recipe.matches(this.crafting);
+      if (usedSlots)
+      {
+        this.resultItem = recipe.getResult(usedSlots);
+        break;
+      }
     }
   }
 
@@ -96,6 +111,8 @@ class App extends React.Component
           break;
         }
       }
+
+      this.resultItem = null;
     }
   }
 
@@ -105,9 +122,11 @@ class App extends React.Component
     return <div className="app-container">
       <h1>Craftem</h1>
       <CursorComponent src={this.equippedItem} x={this.cursorX} y={this.cursorY}/>
-      <ContainerComponent src={this.container} onSlotClick={this.onSlotClick}/>
-      <ContainerComponent src={this.crafting} onSlotClick={this.onSlotClick}/>
-      <button onClick={this.onClick}>CRAFT!</button>
+      <ContainerComponent className="player-inventory" title="Inventory" src={this.container} onSlotClick={this.onSlotClick}/>
+      <ContainerComponent className="player-crafting" title="Crafting" src={this.crafting} onSlotClick={this.onSlotClick}/>
+      <svg className="itemresult" width="96" height="96" onClick={this.onClick}>
+        {ItemRenderer.renderItemStack(this.resultItem)}
+      </svg>
     </div>;
   }
 }

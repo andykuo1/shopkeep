@@ -10,7 +10,7 @@ class ContainerComponent extends React.Component
     super();
   }
 
-  renderContainerGrid(container, slotWidth, slotHeight)
+  renderContainerGrid(container, offsetX, offsetY, slotWidth, slotHeight)
   {
     const result = [];
     const containerWidth = container.getWidth();
@@ -20,29 +20,29 @@ class ContainerComponent extends React.Component
     {
       result.push(
         <rect key={i} className="itemslot"
-          x={(i % containerWidth) * slotWidth}
-          y={Math.floor(i / containerWidth) * slotHeight}
+          x={(i % containerWidth) * slotWidth + offsetX}
+          y={Math.floor(i / containerWidth) * slotHeight + offsetY}
           width={slotWidth} height={slotHeight}
-          onClick={(e) => {if (callback) callback(container, i)}}/>
+          onClick={(e) => {if (callback) callback(container, i);}}/>
       );
     }
 
     return <g>{result}</g>;
   }
 
-  renderContainerItems(container, slotWidth, slotHeight)
+  renderContainerItems(container, offsetX, offsetY, slotWidth, slotHeight)
   {
     const containerWidth = container.getWidth();
     return container.getSlots().map((e, i) => {
       if (!e) return null;
-      
+
       const index = e.index;
       //Only render if root index...
       if (i != index) return null;
 
       return renderItemStack(e.itemStack,
-        (index % containerWidth) * slotWidth,
-        Math.floor(index / containerWidth) * slotHeight,
+        (index % containerWidth) * slotWidth + offsetX,
+        Math.floor(index / containerWidth) * slotHeight + offsetY,
         slotWidth, slotHeight);
     });
   }
@@ -63,15 +63,19 @@ class ContainerComponent extends React.Component
     const paddingLeft = (width - (slotWidth * containerWidth)) / 2;
     const paddingTop = (height - (slotHeight * containerHeight)) / 2;
 
-    return <svg className="itemcontainer"
-      width={width} height={height}
+    const headerHeight = 18;
+
+    return <svg className={"itemcontainer " + this.props.className}
+      width={width} height={height + headerHeight}
       style={{paddingLeft: paddingLeft, paddingTop: paddingTop}}>
       {
-        this.renderContainerGrid(src, slotWidth, slotHeight)
+        this.renderContainerGrid(src, 0, headerHeight, slotWidth, slotHeight)
       }
       {
-        this.renderContainerItems(src, slotWidth, slotHeight)
+        this.renderContainerItems(src, 0, headerHeight, slotWidth, slotHeight)
       }
+      <text className="itemcontainer-title"
+        x={4} y={headerHeight - 4}>{this.props.title}</text>
     </svg>;
   }
 }
