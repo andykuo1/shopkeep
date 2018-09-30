@@ -10,8 +10,7 @@ import CursorComponent from 'craftem/components/CursorComponent.js';
 import Container from 'craftem/container/Container.js';
 
 import CraftingRegistry from 'craftem/crafting/CraftingRegistry.js';
-import ShapedCraftingRecipe from 'craftem/crafting/ShapedCraftingRecipe.js';
-import ShapelessCraftingRecipe from 'craftem/crafting/ShapelessCraftingRecipe.js';
+import CraftingRecipe from 'craftem/crafting/CraftingRecipe.js';
 
 import ItemRegistry from 'craftem/item/ItemRegistry.js';
 import ItemStack from 'craftem/item/ItemStack.js';
@@ -25,10 +24,10 @@ export const TORCH = ItemRegistry.registerItem(new Item("torch", "yellow")).setS
 export const OAK_LOG = ItemRegistry.registerItem(new Item("oakLog", "gray")).setSize(3, 2);
 export const OAK_WOOD = ItemRegistry.registerItem(new Item("oakWood", "slategray")).setSize(1, 2).setMaxStackSize(4);
 
-CraftingRegistry.registerRecipe(new ShapedCraftingRecipe("XXX", {X: TOUGH_FIBER}, ROPE));
-CraftingRegistry.registerRecipe(new ShapedCraftingRecipe("X|Y", {X: OILED_FIBER, Y: OAK_WOOD}, TORCH));
-CraftingRegistry.registerRecipe(new ShapelessCraftingRecipe([OAK_LOG], OAK_WOOD, 4));
-CraftingRegistry.registerRecipe(new ShapelessCraftingRecipe([TOUGH_FIBER, OIL_FLASK], OILED_FIBER));
+CraftingRegistry.registerRecipe(new CraftingRecipe("XXX", {X: TOUGH_FIBER}, ROPE));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X,Y", {X: OILED_FIBER, Y: OAK_WOOD}, TORCH));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: OAK_LOG}, OAK_WOOD, 4));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X&Y", {X: TOUGH_FIBER, Y: OIL_FLASK}, OILED_FIBER));
 
 class App extends React.Component
 {
@@ -90,11 +89,11 @@ class App extends React.Component
       const recipes = CraftingRegistry.getRecipes();
       for(let recipe of recipes)
       {
-        console.log("Testing: ", recipe);
-        if (recipe.matches(this.crafting))
+        const result = recipe.applyRecipe(this.crafting);
+        if (result)
         {
-          this.equippedItem = recipe.resolve(this.crafting);
-          return false;
+          this.equippedItem = result;
+          break;
         }
       }
     }
