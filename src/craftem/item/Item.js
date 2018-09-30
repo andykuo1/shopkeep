@@ -1,8 +1,11 @@
 class Item
 {
-  constructor(name)
+  constructor(name, color="dodgerblue")
   {
     this._name = name;
+
+    //HACK: this is temp
+    this.color = color;
 
     this._width = 1;
     this._height = 1;

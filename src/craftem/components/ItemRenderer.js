@@ -13,7 +13,8 @@ export function renderItemStack(itemStack, x=0, y=0, slotWidth=32, slotHeight=32
   return <g key={itemStack.getID()} className="itemstack">
     <rect className="itemstack-item"
       x={left} y={top}
-      width={width} height={height}/>
+      width={width} height={height}
+      style={{fill: item.color}}/>
     <text className="itemstack-size"
       x={left + width - padding} y={top + height - padding}>{itemStack.getStackSize()}</text>
   </g>;

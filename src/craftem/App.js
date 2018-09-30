@@ -11,18 +11,24 @@ import Container from 'craftem/container/Container.js';
 
 import CraftingRegistry from 'craftem/crafting/CraftingRegistry.js';
 import ShapedCraftingRecipe from 'craftem/crafting/ShapedCraftingRecipe.js';
+import ShapelessCraftingRecipe from 'craftem/crafting/ShapelessCraftingRecipe.js';
 
 import ItemRegistry from 'craftem/item/ItemRegistry.js';
 import ItemStack from 'craftem/item/ItemStack.js';
 import Item from 'craftem/item/Item.js';
 
-export const TOUGH_FIBER = ItemRegistry.registerItem(new Item("toughFiber")).setMaxStackSize(16);
+export const TOUGH_FIBER = ItemRegistry.registerItem(new Item("toughFiber", "orange")).setMaxStackSize(16);
+export const OILED_FIBER = ItemRegistry.registerItem(new Item("oiledFiber", "red")).setMaxStackSize(16);
 export const ROPE = ItemRegistry.registerItem(new Item("rope")).setSize(2, 1);
-export const OIL_FLASK = ItemRegistry.registerItem(new Item("oilFlask")).setSize(1, 2).setMaxStackSize(4);
-export const OAK_LOG = ItemRegistry.registerItem(new Item("oakLog")).setSize(3, 2);
-export const OAK_WOOD = ItemRegistry.registerItem(new Item("oakWood")).setSize(1, 2).setMaxStackSize(4);
+export const OIL_FLASK = ItemRegistry.registerItem(new Item("oilFlask", "red")).setSize(1, 2);
+export const TORCH = ItemRegistry.registerItem(new Item("torch", "yellow")).setSize(1, 2);
+export const OAK_LOG = ItemRegistry.registerItem(new Item("oakLog", "gray")).setSize(3, 2);
+export const OAK_WOOD = ItemRegistry.registerItem(new Item("oakWood", "slategray")).setSize(1, 2).setMaxStackSize(4);
 
 CraftingRegistry.registerRecipe(new ShapedCraftingRecipe("XXX", {X: TOUGH_FIBER}, ROPE));
+CraftingRegistry.registerRecipe(new ShapedCraftingRecipe("X|Y", {X: OILED_FIBER, Y: OAK_WOOD}, TORCH));
+CraftingRegistry.registerRecipe(new ShapelessCraftingRecipe([OAK_LOG], OAK_WOOD, 4));
+CraftingRegistry.registerRecipe(new ShapelessCraftingRecipe([TOUGH_FIBER, OIL_FLASK], OILED_FIBER));
 
 class App extends React.Component
 {
@@ -35,7 +41,7 @@ class App extends React.Component
     this.cursorY = 0;
 
     this.container = new Container(7, 3);
-    this.container.addItemStack(new ItemStack(ItemRegistry.getItem("toughFiber")));
+    this.container.addItemStack(new ItemStack(ItemRegistry.getItem("oiledFiber")));
     this.container.addItemStack(new ItemStack(ItemRegistry.getItem("oakWood")), 1);
     this.container.addItemStack(new ItemStack(ItemRegistry.getItem("oakLog")), 2);
     this.container.addItemStack(new ItemStack(ItemRegistry.getItem("oakWood")), 5);

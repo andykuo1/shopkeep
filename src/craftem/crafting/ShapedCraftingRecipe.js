@@ -23,7 +23,7 @@ class ShapedCraftingRecipe extends CraftingRecipe
     const containerWidth = container.getWidth();
     const containerHeight = container.getHeight();
     const rows = pattern.split("|");
-    let row = rows.pop().split("");
+    let row = rows.shift().split("");
     let nextItem = mapping[row[0]];
     let nextX = 0;
 
@@ -65,7 +65,8 @@ class ShapedCraftingRecipe extends CraftingRecipe
         //Get the next row to read...
         if (rows.length > 0)
         {
-          row = rows.pop().split("");
+          row = rows.shift().split("");
+          nextItem = mapping[row[0]];
         }
         //No more rows to read...
         else
@@ -85,7 +86,7 @@ class ShapedCraftingRecipe extends CraftingRecipe
     const containerWidth = container.getWidth();
     const containerHeight = container.getHeight();
     const rows = pattern.split("|");
-    let row = rows.pop().split("");
+    let row = rows.shift().split("");
     let nextItem = mapping[row[0]];
     let nextX = 0;
 
@@ -106,7 +107,7 @@ class ShapedCraftingRecipe extends CraftingRecipe
         else if (itemStack.getItem() === nextItem)
         {
           //Actually delete it!
-          container.removeItemStack(index);
+          container.removeItemStack(index, 1);
 
           row.shift();
           nextItem = mapping[row[0]];
@@ -130,7 +131,8 @@ class ShapedCraftingRecipe extends CraftingRecipe
         //Get the next row to read...
         if (rows.length > 0)
         {
-          row = rows.pop().split("");
+          row = rows.shift().split("");
+          nextItem = mapping[row[0]];
         }
         //No more rows to read...
         else
