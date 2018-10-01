@@ -1,5 +1,5 @@
 import React from 'react';
-import ItemStack from 'craftem/item/ItemStack.js';
+import ItemStack from 'item/ItemStack.js';
 
 export function renderItemStack(itemStack, x=0, y=0, slotWidth=32, slotHeight=32, padding=2)
 {

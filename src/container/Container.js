@@ -16,7 +16,7 @@ class Container
     }
   }
 
-  putItemStack(itemStack)
+  addItemStack(itemStack)
   {
     const item = itemStack.getItem();
     const containerWidth = this._width;
@@ -27,7 +27,7 @@ class Container
       for(let x = 0, width = containerWidth - item.getWidth() + 1; x < width; ++x)
       {
         const index = x + y * containerWidth;
-        const result = this.addItemStack(itemStack, index);
+        const result = this.putItemStack(itemStack, index);
         if (result)
         {
           itemStack = result;
@@ -42,8 +42,10 @@ class Container
     return itemStack;
   }
 
-  addItemStack(itemStack, slotIndex=0, replace=false)//, autofill=false)
+  putItemStack(itemStack, slotIndex=0, replace=false)//, autofill=false)
   {
+    if (itemStack.getStackSize() <= 0) return null;
+
     const item = itemStack.getItem();
     const itemWidth = item.getWidth();
     const itemHeight = item.getHeight();
@@ -72,8 +74,8 @@ class Container
     }
 
     //Check if empty or replaceable...
-    let replacedSlot = null;
-    let slot;
+    let replacedSlot = undefined;
+    let slot = undefined;
     let index;
     for(let i = 0; i < itemWidth; ++i)
     {
@@ -84,7 +86,7 @@ class Container
         if (typeof slot == 'object')
         {
           //If found similar item to merge...
-          let slotStack = slot.itemStack;
+          let slotStack = slot.getItemStack();
           if (slotStack.getItem() === item)
           {
             const maxSize = item.getMaxStackSize();
@@ -114,7 +116,7 @@ class Container
           if (replace)
           {
             //If have not yet attempted to replace anything...
-            if (replacedSlot == null)
+            if (replacedSlot == undefined)
             {
               replacedSlot = slot;
             }
@@ -133,8 +135,8 @@ class Container
     }
 
     //Can put into container...
-    const result = replacedSlot ? this.removeItemStack(replacedSlot.index) : null;
-    slot = {itemStack: itemStack, index: slotIndex};
+    const result = typeof replacedSlot == 'object' ? this.removeItemStack(replacedSlot.getRootIndex()) : null;
+    slot = new ItemSlot(slotIndex, itemStack);
 
     for(let i = 0; i < itemWidth; ++i)
     {
@@ -153,9 +155,9 @@ class Container
     if (slotIndex >= 0 && slotIndex < this.getSize() && amount > 0)
     {
       const slot = this._slots[slotIndex];
-      if (slot)
+      if (typeof slot == 'object')
       {
-        const itemStack = slot.itemStack;
+        const itemStack = slot.getItemStack();
 
         //Try splitting...
         if (itemStack.getStackSize() > amount)
@@ -170,7 +172,7 @@ class Container
         const item = itemStack.getItem();
         const itemWidth = item.getWidth();
         const itemHeight = item.getHeight();
-        const rootIndex = slot.index;
+        const rootIndex = slot.getRootIndex();
         const containerWidth = this._width;
 
         let index;
@@ -198,23 +200,50 @@ class Container
     if (slotIndex >= 0 && slotIndex < this.getSize())
     {
       const slot = this._slots[slotIndex];
-      return slot ? slot.itemStack : null;
+      return typeof slot == 'object' ? slot.getItemStack() : null;
     }
     return null;
   }
 
-  getFirstSlotByItem(item, fromIndex=0)
+  hasItem(item)
   {
-    let slot;
-    for(let i = fromIndex, length = this._slots.length; i < length; ++i)
+    let slot, slotItem;
+    for(let i = 0, length = this._slots.length; i < length; ++i)
     {
       slot = this._slots[i];
-      if (slot && slot.itemStack.getItem() === item)
+      if (typeof slot == 'object')
       {
-        return slot;
+        slotItem = slot.getItemStack().getItem();
+        if (slotItem === item)
+        {
+          return true;
+        }
+        else
+        {
+          //Skip over self-indices
+          i += slotItem.getWidth();
+        }
       }
     }
-    return null;
+    return false;
+  }
+
+  getSlotsWithItem(item, minAmount=1, dst=[])
+  {
+    let slot, itemStack;
+    for(let i = 0, length = this._slots.length; i < length; ++i)
+    {
+      slot = this._slots[i];
+      if (typeof slot == 'object')
+      {
+        itemStack = slot.getItemStack();
+        if (itemStack.getItem() === item && itemStack.getStackSize() >= minAmount)
+        {
+          dst.push(slot);
+        }
+      }
+    }
+    return dst;
   }
 
   getSlotByIndex(slotIndex)
@@ -224,6 +253,11 @@ class Container
       return this._slots[slotIndex];
     }
     return null;
+  }
+
+  isSlotEmpty(slotIndex)
+  {
+    return typeof this._slots[slotIndex] != 'object';
   }
 
   getSlots()
@@ -244,6 +278,25 @@ class Container
   getSize()
   {
     return this._width * this._height;
+  }
+}
+
+class ItemSlot
+{
+  constructor(rootIndex, itemStack)
+  {
+    this._index = rootIndex;
+    this._itemStack = itemStack;
+  }
+
+  getRootIndex()
+  {
+    return this._index;
+  }
+
+  getItemStack()
+  {
+    return this._itemStack;
   }
 }
 

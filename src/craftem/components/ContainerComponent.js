@@ -36,11 +36,11 @@ class ContainerComponent extends React.Component
     return container.getSlots().map((e, i) => {
       if (!e) return null;
 
-      const index = e.index;
+      const index = e.getRootIndex();
       //Only render if root index...
       if (i != index) return null;
 
-      return renderItemStack(e.itemStack,
+      return renderItemStack(e.getItemStack(),
         (index % containerWidth) * slotWidth + offsetX,
         Math.floor(index / containerWidth) * slotHeight + offsetY,
         slotWidth, slotHeight);

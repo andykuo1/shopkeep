@@ -9,14 +9,14 @@ import CursorComponent from 'craftem/components/CursorComponent.js';
 
 import * as ItemRenderer from 'craftem/components/ItemRenderer.js';
 
-import Container from 'craftem/container/Container.js';
+import Container from 'container/Container.js';
 
-import CraftingRegistry from 'craftem/crafting/CraftingRegistry.js';
-import CraftingRecipe from 'craftem/crafting/CraftingRecipe.js';
+import CraftingRegistry from 'crafting/CraftingRegistry.js';
+import CraftingRecipe from 'crafting/CraftingRecipe.js';
 
-import ItemRegistry from 'craftem/item/ItemRegistry.js';
-import ItemStack from 'craftem/item/ItemStack.js';
-import Item from 'craftem/item/Item.js';
+import ItemRegistry from 'item/ItemRegistry.js';
+import ItemStack from 'item/ItemStack.js';
+import Item from 'item/Item.js';
 
 export const TOUGH_FIBER = ItemRegistry.registerItem(new Item("toughFiber", "orange")).setMaxStackSize(16);
 export const OILED_FIBER = ItemRegistry.registerItem(new Item("oiledFiber", "red")).setMaxStackSize(16);
@@ -51,7 +51,7 @@ class App extends React.Component
     this.container = new Container(7, 7);
     for(let item of ItemRegistry.getItems())
     {
-      this.container.putItemStack(new ItemStack(item, item.getMaxStackSize()));
+      this.container.addItemStack(new ItemStack(item, item.getMaxStackSize()));
     }
 
     this.crafting = new Container(5, 5);
@@ -81,7 +81,7 @@ class App extends React.Component
   {
     if (this.equippedItem)
     {
-      this.equippedItem = container.addItemStack(this.equippedItem, slotIndex, true);
+      this.equippedItem = container.putItemStack(this.equippedItem, slotIndex, true);
     }
     else
     {

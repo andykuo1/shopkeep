@@ -1,4 +1,4 @@
-import ItemStack from 'craftem/item/ItemStack.js';
+import ItemStack from 'item/ItemStack.js';
 
 class CraftingRecipe
 {
@@ -19,7 +19,7 @@ class CraftingRecipe
     {
       for(let slot of usedSlots)
       {
-        container.removeItemStack(slot.index, 1);
+        container.removeItemStack(slot.getRootIndex(), 1);
       }
 
       return this.getResult(usedSlots);
@@ -96,7 +96,7 @@ function matchesPattern(container, pattern, itemMap, offsetX=0, offsetY=0, patte
       {
         index = x + y * containerWidth;
         slot = container.getSlotByIndex(index);
-        if (slot)
+        if (typeof slot == 'object')
         {
           if (nextSymbol == '.')
           {
@@ -110,7 +110,7 @@ function matchesPattern(container, pattern, itemMap, offsetX=0, offsetY=0, patte
               //Success!
             }
           }
-          else if (slot.itemStack.getItem() !== itemMap[nextSymbol])
+          else if (slot.getItemStack().getItem() !== itemMap[nextSymbol])
           {
             if (dst.length > 0) dst.length = 0;
             return null;
@@ -118,7 +118,7 @@ function matchesPattern(container, pattern, itemMap, offsetX=0, offsetY=0, patte
           else if (used.includes(slot))
           {
             //Already used slot, must ensure enough amount
-            let stackSize = slot.itemStack.getStackSize();
+            let stackSize = slot.getItemStack().getStackSize();
             let slotIndex = 0;
             while((slotIndex = used.indexOf(slot, slotIndex)) >= 0)
             {
@@ -166,17 +166,6 @@ function matchesPattern(container, pattern, itemMap, offsetX=0, offsetY=0, patte
   }
 
   return dst;
-}
-
-class CraftingPattern
-{
-  constructor(pattern)
-  {
-    this.pattern = pattern;
-    const rows = this.pattern.split(',');
-    this.width = rows[0].length;
-    this.height = rows.length;
-  }
 }
 
 export default CraftingRecipe;
