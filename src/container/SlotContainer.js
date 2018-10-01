@@ -8,6 +8,12 @@ class SlotContainer extends Container
   }
 
   //Override
+  clear()
+  {
+    this._slots[0] = undefined;
+  }
+
+  //Override
   addItemStack(itemStack)
   {
     return this.putItemStack(itemStack, 0, false);
@@ -64,6 +70,20 @@ class SlotContainer extends Container
   {
     if (clear) throw new Error("Cannot clear slot container");
     return super.removeSlot(slotIndex, false);
+  }
+
+  //Override
+  getWidth()
+  {
+    const itemStack = this.getItemStack(0);
+    return itemStack ? itemStack.getItem().getWidth() : super.getWidth();
+  }
+
+  //Override
+  getHeight()
+  {
+    const itemStack = this.getItemStack(0);
+    return itemStack ? itemStack.getItem().getHeight() : super.getHeight();
   }
 }
 

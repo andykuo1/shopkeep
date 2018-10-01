@@ -10,11 +10,12 @@ class ContainerComponent extends React.Component
     super();
   }
 
-  renderContainerGrid(container, offsetX, offsetY, slotWidth, slotHeight)
+  renderContainerGrid(container, offsetX, offsetY, slotWidth, slotHeight, hidden=false)
   {
     const result = [];
     const containerWidth = container.getWidth();
     const callback = this.props.onSlotClick;
+    const hiddenStyle = {outline: "none"};
 
     for(let i = 0, length = container.getSize(); i < length; ++i)
     {
@@ -23,6 +24,7 @@ class ContainerComponent extends React.Component
           x={(i % containerWidth) * slotWidth + offsetX}
           y={Math.floor(i / containerWidth) * slotHeight + offsetY}
           width={slotWidth} height={slotHeight}
+          style={hidden ? hiddenStyle : null}
           onClick={(e) => {if (callback) callback(container, i);}}/>
       );
     }
@@ -63,19 +65,22 @@ class ContainerComponent extends React.Component
     const paddingLeft = (width - (slotWidth * containerWidth)) / 2;
     const paddingTop = (height - (slotHeight * containerHeight)) / 2;
 
-    const headerHeight = 18;
+    const headerHeight = this.props.title ? 18 : 0;
 
     return <svg className={"itemcontainer " + this.props.className}
       width={width} height={height + headerHeight}
       style={{paddingLeft: paddingLeft, paddingTop: paddingTop}}>
       {
-        this.renderContainerGrid(src, 0, headerHeight, slotWidth, slotHeight)
+        this.renderContainerGrid(src, 0, headerHeight, slotWidth, slotHeight, this.props.hideGrid)
       }
       {
         this.renderContainerItems(src, 0, headerHeight, slotWidth, slotHeight)
       }
-      <text className="itemcontainer-title"
-        x={4} y={headerHeight - 4}>{this.props.title}</text>
+      {
+        this.props.title &&
+        <text className="itemcontainer-title"
+          x={4} y={headerHeight - 4}>{this.props.title}</text>
+      }
     </svg>;
   }
 }

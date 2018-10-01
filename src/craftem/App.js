@@ -10,6 +10,7 @@ import CursorComponent from 'craftem/components/CursorComponent.js';
 import * as ItemRenderer from 'craftem/components/ItemRenderer.js';
 
 import Container from 'container/Container.js';
+import SlotContainer from 'container/SlotContainer.js';
 
 import CraftingRegistry from 'crafting/CraftingRegistry.js';
 import CraftingRecipe from 'crafting/CraftingRecipe.js';
@@ -55,10 +56,11 @@ class App extends React.Component
     }
 
     this.crafting = new Container(5, 5);
+    this.craftingResult = new SlotContainer();
 
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onSlotClick = this.onSlotClick.bind(this);
-    this.onClick = this.onClick.bind(this);
+    this.onResultClick = this.onResultClick.bind(this);
   }
 
   componentWillMount()
@@ -88,20 +90,20 @@ class App extends React.Component
       this.equippedItem = container.removeItemStack(slotIndex, 1);
     }
 
-    this.resultItem = null;
+    this.craftingResult.clear();
     const recipes = CraftingRegistry.getRecipes();
     for(let recipe of recipes)
     {
       const usedSlots = recipe.matches(this.crafting);
       if (usedSlots)
       {
-        this.resultItem = recipe.getResult(usedSlots);
+        this.craftingResult.putItemStack(recipe.getResult(usedSlots), 0, true);
         break;
       }
     }
   }
 
-  onClick(e)
+  onResultClick(container, slotIndex)
   {
     if (!this.equippedItem)
     {
@@ -116,7 +118,7 @@ class App extends React.Component
         }
       }
 
-      this.resultItem = null;
+      this.craftingResult.clear();
     }
   }
 
@@ -128,9 +130,7 @@ class App extends React.Component
       <CursorComponent src={this.equippedItem} x={this.cursorX} y={this.cursorY}/>
       <ContainerComponent className="player-inventory" title="Inventory" src={this.container} onSlotClick={this.onSlotClick}/>
       <ContainerComponent className="player-crafting" title="Crafting" src={this.crafting} onSlotClick={this.onSlotClick}/>
-      <svg className="itemresult" width="96" height="96" onClick={this.onClick}>
-        {ItemRenderer.renderItemStack(this.resultItem)}
-      </svg>
+      <ContainerComponent className="player-result" src={this.craftingResult} hideGrid="true" onSlotClick={this.onResultClick}/>
     </div>;
   }
 }

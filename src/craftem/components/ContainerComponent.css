@@ -1,5 +1,6 @@
 .itemcontainer {
   background: none;
+  border: 1px dashed black;
 }
 
 .itemcontainer-title {
