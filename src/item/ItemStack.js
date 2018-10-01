@@ -16,6 +16,42 @@ class ItemStack
     return result;
   }
 
+  merge(itemStack)
+  {
+    const item = this.getItem();
+    const otherItem = itemStack.getItem();
+    if (item !== otherItem) return false;
+
+    const maxSize = item.getMaxStackSize();
+    const stackSize = this._stackSize;
+    if (stackSize < maxSize)
+    {
+      const otherSize = itemStack._stackSize;
+      const newStackSize = stackSize + otherSize;
+      const remaining = newStackSize - maxSize;
+
+      //If can fit the entire stack...
+      if (remaining <= 0)
+      {
+        this.setStackSize(newStackSize);
+        itemStack.setStackSize(0);
+        return true;
+      }
+      //Fit some of it at least...
+      else
+      {
+        this.setStackSize(maxSize);
+        itemStack.setStackSize(remaining);
+        return true;
+      }
+    }
+    else
+    {
+      //No more room to merge
+      return false;
+    }
+  }
+
   setItem(item)
   {
     this._item = item;
@@ -39,6 +75,11 @@ class ItemStack
   getStackSize()
   {
     return this._stackSize;
+  }
+
+  isEmpty()
+  {
+    return this._stackSize <= 0;
   }
 
   setMetadata(metadata)

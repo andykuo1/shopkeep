@@ -18,22 +18,48 @@ class Container
 
   addItemStack(itemStack)
   {
+    if (itemStack.getStackSize() <= 0) return null;
+
     const item = itemStack.getItem();
+    const itemWidth = item.getWidth();
+    const itemHeight = item.getHeight();
     const containerWidth = this._width;
     const containerHeight = this._height;
 
-    for(let y = 0, height = containerHeight - item.getHeight() + 1; y < height; ++y)
+    let slot = undefined, slotItemStack;
+    let index, flag;
+    for(let y = 0, height = containerHeight - itemHeight + 1; y < height; ++y)
     {
-      for(let x = 0, width = containerWidth - item.getWidth() + 1; x < width; ++x)
+      for(let x = 0, width = containerWidth - itemWidth + 1; x < width; ++x)
       {
-        const index = x + y * containerWidth;
-        const result = this.putItemStack(itemStack, index);
-        if (result)
+        index = x + y * containerWidth;
+
+        flag = true;
+        for(let j = 0; j < itemHeight; ++j)
         {
-          itemStack = result;
+          for(let i = 0; i < itemWidth; ++i)
+          {
+            slot = this._slots[index + (i + j * containerWidth)];
+
+            if (typeof slot == 'object')
+            {
+              //If successfully merged the entire item stack...
+              if (slot.getItemStack().merge(itemStack) && itemStack.isEmpty())
+              {
+                return null;
+              }
+              else
+              {
+                flag = false;
+              }
+            }
+          }
         }
-        else
+
+        //If found enough empty space...
+        if (flag)
         {
+          this.addSlot(index, itemStack);
           return null;
         }
       }
@@ -77,43 +103,22 @@ class Container
     let replacedSlot = undefined;
     let slot = undefined;
     let index;
-    for(let i = 0; i < itemWidth; ++i)
+    for(let y = 0; y < itemHeight; ++y)
     {
-      for(let j = 0; j < itemHeight; ++j)
+      for(let x = 0; x < itemWidth; ++x)
       {
-        index = slotIndex + (i + j * containerWidth);
+        index = slotIndex + (x + y * containerWidth);
         slot = this._slots[index];
         if (typeof slot == 'object')
         {
           //If found similar item to merge...
-          let slotStack = slot.getItemStack();
-          if (slotStack.getItem() === item)
+          const slotStack = slot.getItemStack();
+          if (slotStack.merge(itemStack))
           {
-            const maxSize = item.getMaxStackSize();
-            const slotSize = slotStack.getStackSize();
-            if (slotSize < maxSize)
-            {
-              const stackSize = itemStack.getStackSize();
-              const newStackSize = slotSize + stackSize;
-              const remaining = newStackSize - maxSize;
-
-              //If can fit the entire stack...
-              if (remaining <= 0)
-              {
-                slotStack.setStackSize(newStackSize);
-                itemStack.setStackSize(0);
-                return null;
-              }
-              else
-              {
-                slotStack.setStackSize(maxSize);
-                itemStack.setStackSize(remaining);
-                return itemStack;
-              }
-            }
+            return itemStack.isEmpty() ? null : itemStack;
           }
-
-          if (replace)
+          //If cannot merge, try replace...
+          else if (replace)
           {
             //If have not yet attempted to replace anything...
             if (replacedSlot == undefined)
@@ -126,6 +131,7 @@ class Container
               return itemStack;
             }
           }
+          //If cannot merge nor replace, give up...
           else
           {
             return itemStack;
@@ -135,18 +141,14 @@ class Container
     }
 
     //Can put into container...
-    const result = typeof replacedSlot == 'object' ? this.removeItemStack(replacedSlot.getRootIndex()) : null;
-    slot = new ItemSlot(slotIndex, itemStack);
-
-    for(let i = 0; i < itemWidth; ++i)
+    let result = null;
+    //Is replacing...
+    if (typeof replacedSlot == 'object')
     {
-      for(let j = 0; j < itemHeight; ++j)
-      {
-        index = slotIndex + (i + j * containerWidth);
-        this._slots[index] = slot;
-      }
+      result = replacedSlot.getItemStack();
+      this.removeSlot(replacedSlot.getRootIndex());
     }
-
+    this.addSlot(slotIndex, itemStack);
     return result;
   }
 
@@ -169,21 +171,7 @@ class Container
         }
 
         //Remove itemstack from container...
-        const item = itemStack.getItem();
-        const itemWidth = item.getWidth();
-        const itemHeight = item.getHeight();
-        const rootIndex = slot.getRootIndex();
-        const containerWidth = this._width;
-
-        let index;
-        for(let i = 0; i < itemWidth; ++i)
-        {
-          for(let j = 0; j < itemHeight; ++j)
-          {
-            index = rootIndex + (i + j * containerWidth);
-            this._slots[index] = undefined;
-          }
-        }
+        this.removeSlot(slotIndex);
 
         return itemStack;
       }
@@ -226,6 +214,73 @@ class Container
       }
     }
     return false;
+  }
+
+  addSlot(slotIndex, itemStack, fill=true)
+  {
+    if (slotIndex < 0 || slotIndex >= this._slots.length) throw new Error("Cannot add slot out of bounds");
+
+    const slot = new ItemSlot(slotIndex, itemStack);
+
+    if (fill)
+    {
+      const containerWidth = this._width;
+      const itemWidth = itemStack.getItem().getWidth();
+      const itemHeight = itemStack.getItem().getHeight();
+
+      let index;
+      for(let y = 0; y < itemHeight; ++y)
+      {
+        for(let x = 0; x < itemWidth; ++x)
+        {
+          index = slotIndex + (x + y * containerWidth);
+          this._slots[index] = slot;
+        }
+      }
+    }
+    else
+    {
+      this._slots[slotIndex] = slot;
+    }
+
+    return slot;
+  }
+
+  removeSlot(slotIndex, clear=true)
+  {
+    if (slotIndex < 0 || slotIndex >= this._slots.length) throw new Error("Cannot remove slot out of bounds");
+
+    const slot = this._slots[slotIndex];
+    if (typeof slot == 'object')
+    {
+      if (clear)
+      {
+        const containerWidth = this._width;
+        const itemStack = slot.getItemStack();
+        const rootIndex = slot.getRootIndex();
+
+        const itemWidth = itemStack.getItem().getWidth();
+        const itemHeight = itemStack.getItem().getHeight();
+
+        let index;
+        for(let y = 0; y < itemHeight; ++y)
+        {
+          for(let x = 0; x < itemWidth; ++x)
+          {
+            index = rootIndex + (x + y * containerWidth);
+            this._slots[index] = undefined;
+          }
+        }
+      }
+      else
+      {
+        this._slots[slotIndex] = undefined;
+      }
+
+      return slot;
+    }
+
+    return null;
   }
 
   getSlotsWithItem(item, minAmount=1, dst=[])
