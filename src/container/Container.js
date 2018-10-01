@@ -68,7 +68,7 @@ class Container
     return itemStack;
   }
 
-  putItemStack(itemStack, slotIndex=0, replace=false)//, autofill=false)
+  putItemStack(itemStack, slotIndex=0, replace=false)
   {
     if (itemStack.getStackSize() <= 0) return null;
 
@@ -185,7 +185,7 @@ class Container
 
   getItemStack(slotIndex)
   {
-    if (slotIndex >= 0 && slotIndex < this.getSize())
+    if (slotIndex >= 0 && slotIndex < this._slots.length)
     {
       const slot = this._slots[slotIndex];
       return typeof slot == 'object' ? slot.getItemStack() : null;
