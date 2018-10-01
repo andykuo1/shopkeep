@@ -25,11 +25,17 @@ export const OIL_FLASK = ItemRegistry.registerItem(new Item("oilFlask", "red")).
 export const TORCH = ItemRegistry.registerItem(new Item("torch", "yellow")).setSize(1, 2);
 export const OAK_LOG = ItemRegistry.registerItem(new Item("oakLog", "gray")).setSize(3, 2);
 export const OAK_WOOD = ItemRegistry.registerItem(new Item("oakWood", "slategray")).setSize(1, 2).setMaxStackSize(4);
+export const SHIRT = ItemRegistry.registerItem(new Item("shirt", "lightblue")).setSize(2, 3);
+export const CLOTH_RAG = ItemRegistry.registerItem(new Item("clothRag", "lightgray")).setSize(2, 2).setMaxStackSize(8);
+export const OILED_CLOTH_RAG = ItemRegistry.registerItem(new Item("oiledClothRag", "red")).setSize(2, 2).setMaxStackSize(8);
 
 CraftingRegistry.registerRecipe(new CraftingRecipe("XXX", {X: TOUGH_FIBER}, ROPE));
 CraftingRegistry.registerRecipe(new CraftingRecipe("X,Y", {X: OILED_FIBER, Y: OAK_WOOD}, TORCH));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X,Y,Z", {X: OILED_CLOTH_RAG, Y: TOUGH_FIBER, Z: OAK_WOOD}, TORCH));
 CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: OAK_LOG}, OAK_WOOD, 4));
 CraftingRegistry.registerRecipe(new CraftingRecipe("X&Y", {X: TOUGH_FIBER, Y: OIL_FLASK}, OILED_FIBER));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: SHIRT}, CLOTH_RAG, 3));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X&Y", {X: CLOTH_RAG, Y: OIL_FLASK}, OILED_CLOTH_RAG));
 
 class App extends React.Component
 {
@@ -42,13 +48,11 @@ class App extends React.Component
     this.cursorX = 0;
     this.cursorY = 0;
 
-    this.container = new Container(7, 3);
-    this.container.addItemStack(new ItemStack(ItemRegistry.getItem("oiledFiber")));
-    this.container.addItemStack(new ItemStack(ItemRegistry.getItem("oakWood")), 1);
-    this.container.addItemStack(new ItemStack(ItemRegistry.getItem("oakLog")), 2);
-    this.container.addItemStack(new ItemStack(ItemRegistry.getItem("oakWood")), 5);
-    this.container.addItemStack(new ItemStack(ItemRegistry.getItem("toughFiber")), 6);
-    this.container.addItemStack(new ItemStack(ItemRegistry.getItem("toughFiber"), 10), 7);
+    this.container = new Container(7, 7);
+    for(let item of ItemRegistry.getItems())
+    {
+      this.container.putItemStack(new ItemStack(item, item.getMaxStackSize()));
+    }
 
     this.crafting = new Container(5, 5);
 

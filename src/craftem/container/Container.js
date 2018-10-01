@@ -16,6 +16,32 @@ class Container
     }
   }
 
+  putItemStack(itemStack)
+  {
+    const item = itemStack.getItem();
+    const containerWidth = this._width;
+    const containerHeight = this._height;
+
+    for(let y = 0, height = containerHeight - item.getHeight() + 1; y < height; ++y)
+    {
+      for(let x = 0, width = containerWidth - item.getWidth() + 1; x < width; ++x)
+      {
+        const index = x + y * containerWidth;
+        const result = this.addItemStack(itemStack, index);
+        if (result)
+        {
+          itemStack = result;
+        }
+        else
+        {
+          return null;
+        }
+      }
+    }
+
+    return itemStack;
+  }
+
   addItemStack(itemStack, slotIndex=0, replace=false)//, autofill=false)
   {
     const item = itemStack.getItem();

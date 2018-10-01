@@ -17,7 +17,7 @@ class ItemRegistry
 
   static getItems()
   {
-    return ITEMS;
+    return ITEMS.values();
   }
 
   static getItem(itemName)
