@@ -1,6 +1,18 @@
 import React from 'react';
 import ItemStack from 'item/ItemStack.js';
 
+export function renderFullItemStack(itemStack, slotWidth=32, slotHeight=32, padding=2)
+{
+  if (!(itemStack instanceof ItemStack)) return null;
+
+  const item = itemStack.getItem();
+  return <svg width={slotWidth * item.getWidth()} height={slotHeight * item.getHeight()}>
+  {
+    renderItemStack(itemStack)
+  }
+  </svg>;
+}
+
 export function renderItemStack(itemStack, x=0, y=0, slotWidth=32, slotHeight=32, padding=2)
 {
   if (!(itemStack instanceof ItemStack)) return null;

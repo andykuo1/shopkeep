@@ -22,6 +22,7 @@ class ItemRegistry
 
   static getItem(itemName)
   {
+    if (!ITEMS.has(itemName)) throw new Error("Cannot find item with name \'" + itemName + "\'");
     return ITEMS.get(itemName);
   }
 }

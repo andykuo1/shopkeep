@@ -5,6 +5,9 @@ class SlotContainer extends Container
   constructor()
   {
     super(1, 1);
+
+    //Override
+    this._editable = false;
   }
 
   //Override
@@ -22,7 +25,6 @@ class SlotContainer extends Container
   //Override
   putItemStack(itemStack, slotIndex=0, replace=false)
   {
-    if (slotIndex != 0) throw new Error("slotIndex must be 0");
     if (itemStack.getStackSize() <= 0) return null;
 
     const slot = this._slots[0];
@@ -49,6 +51,12 @@ class SlotContainer extends Container
       this.addSlot(0, itemStack, false);
       return null;
     }
+  }
+
+  //Override
+  removeItemStack(slotIndex, amount=Infinity)
+  {
+    return super.removeItemStack(0, amount);
   }
 
   //Override

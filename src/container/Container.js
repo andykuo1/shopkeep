@@ -2,11 +2,27 @@ class Container
 {
   constructor(width=1, height=1)
   {
+    this.name = "";
     this._width = width;
     this._height = height;
 
     this._slots = new Array(width * height);
+    this._editable = true;
   }
+
+  setName(name)
+  {
+    this.name = name;
+    return this;
+  }
+
+  setEditable(editable)
+  {
+    this._editable = editable;
+    return this;
+  }
+
+  onContainerUpdate() {}
 
   clear()
   {
@@ -14,6 +30,8 @@ class Container
     {
       this._slots[i] = undefined;
     }
+
+    this.onContainerUpdate();
   }
 
   addItemStack(itemStack)
@@ -44,9 +62,10 @@ class Container
             if (typeof slot == 'object')
             {
               //If successfully merged the entire item stack...
-              if (slot.getItemStack().merge(itemStack) && itemStack.isEmpty())
+              if (slot.getItemStack().merge(itemStack))
               {
-                return null;
+                this.onContainerUpdate();
+                if (itemStack.isEmpty()) return null;
               }
               else
               {
@@ -115,6 +134,7 @@ class Container
           const slotStack = slot.getItemStack();
           if (slotStack.merge(itemStack))
           {
+            this.onContainerUpdate();
             return itemStack.isEmpty() ? null : itemStack;
           }
           //If cannot merge, try replace...
@@ -167,12 +187,12 @@ class Container
           const result = itemStack.copy();
           result.setStackSize(amount);
           itemStack.setStackSize(itemStack.getStackSize() - amount);
+          this.onContainerUpdate();
           return result;
         }
 
         //Remove itemstack from container...
         this.removeSlot(slotIndex);
-
         return itemStack;
       }
       else
@@ -243,6 +263,8 @@ class Container
       this._slots[slotIndex] = slot;
     }
 
+    this.onContainerUpdate();
+
     return slot;
   }
 
@@ -276,6 +298,8 @@ class Container
       {
         this._slots[slotIndex] = undefined;
       }
+
+      this.onContainerUpdate();
 
       return slot;
     }
@@ -320,6 +344,16 @@ class Container
     return this._slots;
   }
 
+  getName()
+  {
+    return this.name;
+  }
+
+  isEditable()
+  {
+    return this._editable;
+  }
+
   getWidth()
   {
     return this._width;
@@ -332,7 +366,7 @@ class Container
 
   getSize()
   {
-    return this._width * this._height;
+    return this._slots.length;
   }
 }
 

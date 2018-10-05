@@ -8,6 +8,41 @@ class ContainerComponent extends React.Component
   constructor()
   {
     super();
+
+    this.ref = null;
+
+    this.selectedSlots = [];
+
+    this.offsetX = 0;
+    this.offsetY = 0;
+  }
+
+  getSlotIndexByPosition(x, y)
+  {
+    const container = this.props.src;
+    const rect = this.ref.getBoundingClientRect();
+    const containerX = rect.left + this.offsetX;
+    const containerY = rect.top + this.offsetY;
+    const containerWidth = rect.right - containerX;
+    const containerHeight = rect.bottom - containerY;
+
+    x -= containerX;
+    y -= containerY;
+
+    //If is withing container...
+    if (x >= 0 && x < containerWidth && y >= 0 && y < containerHeight)
+    {
+      const slotWidth = containerWidth / container.getWidth();
+      const slotHeight = containerHeight / container.getHeight();
+
+      const slotX = Math.floor(x / slotWidth);
+      const slotY = Math.floor(y / slotHeight);
+      return slotX + slotY * container.getWidth();
+    }
+    else
+    {
+      return -1;
+    }
   }
 
   renderContainerGrid(container, offsetX, offsetY, slotWidth, slotHeight, hidden=false)
@@ -17,15 +52,14 @@ class ContainerComponent extends React.Component
     const callback = this.props.onSlotClick;
     const hiddenStyle = {outline: "none"};
 
-    for(let i = 0, length = container.getSize(); i < length; ++i)
+    for(let i = 0, length = container.getWidth() * container.getHeight(); i < length; ++i)
     {
       result.push(
-        <rect key={i} className="itemslot"
+        <rect key={i} className={"itemslot " + (this.selectedSlots.includes(i) ? "select" : "")}
           x={(i % containerWidth) * slotWidth + offsetX}
           y={Math.floor(i / containerWidth) * slotHeight + offsetY}
           width={slotWidth} height={slotHeight}
-          style={hidden ? hiddenStyle : null}
-          onClick={(e) => {if (callback) callback(container, i);}}/>
+          style={hidden ? hiddenStyle : null}/>
       );
     }
 
@@ -49,12 +83,19 @@ class ContainerComponent extends React.Component
     });
   }
 
+  getContainer()
+  {
+    return this.props.src;
+  }
+
   //Override
   render()
   {
     const src = this.props.src;
     const containerWidth = src.getWidth();
     const containerHeight = src.getHeight();
+    const containerTitle = src.getName();
+    const headerHeight = containerTitle ? 18 : 0;
 
     const width = this.props.width || containerWidth * 32;
     const slotWidth = Math.floor(width / containerWidth);
@@ -62,12 +103,11 @@ class ContainerComponent extends React.Component
     const height = this.props.height || containerHeight * slotWidth;
     const slotHeight = Math.floor(height / containerHeight);
 
-    const paddingLeft = (width - (slotWidth * containerWidth)) / 2;
-    const paddingTop = (height - (slotHeight * containerHeight)) / 2;
+    const paddingLeft = this.offsetX = (width - (slotWidth * containerWidth)) / 2;
+    const paddingTop = this.offsetY = (height - (slotHeight * containerHeight)) / 2;
+    this.offsetY += headerHeight;
 
-    const headerHeight = this.props.title ? 18 : 0;
-
-    return <svg className={"itemcontainer " + this.props.className}
+    return <svg ref={ref=>this.ref=ref} className={"itemcontainer " + this.props.className}
       width={width} height={height + headerHeight}
       style={{paddingLeft: paddingLeft, paddingTop: paddingTop}}>
       {
@@ -77,9 +117,9 @@ class ContainerComponent extends React.Component
         this.renderContainerItems(src, 0, headerHeight, slotWidth, slotHeight)
       }
       {
-        this.props.title &&
+        containerTitle &&
         <text className="itemcontainer-title"
-          x={4} y={headerHeight - 4}>{this.props.title}</text>
+          x={4} y={headerHeight - 4}>{containerTitle}</text>
       }
     </svg>;
   }

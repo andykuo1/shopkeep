@@ -3,9 +3,14 @@ import { hot } from 'react-hot-loader';
 import './App.css';
 
 import { guid } from 'util/MathHelper.js';
+import InputController from './InputController.js';
 
 import ContainerComponent from 'craftem/components/ContainerComponent.js';
 import CursorComponent from 'craftem/components/CursorComponent.js';
+import DialogueComponent from 'craftem/components/DialogueComponent.js';
+
+import Market from 'craftem/Market.js';
+import Actor from 'craftem/actor/Actor.js';
 
 import * as ItemRenderer from 'craftem/components/ItemRenderer.js';
 
@@ -44,63 +49,44 @@ class App extends React.Component
   {
     super(props);
 
-    this.equippedItem = new ItemStack(ItemRegistry.getItem("oilFlask"));
-    this.resultItem = null;
-    this.cursorX = 0;
-    this.cursorY = 0;
+    this.inputController = new InputController();
 
-    this.container = new Container(7, 7);
+    this.equippedItem = new ItemStack(ItemRegistry.getItem("oilFlask"));
+
+    this.container = new Container(7, 7).setName("Inventory");
     for(let item of ItemRegistry.getItems())
     {
       this.container.addItemStack(new ItemStack(item, item.getMaxStackSize()));
     }
+    this.crafting = new Container(5, 5).setName("Crafting");
+    const craftingResult = this.craftingResult = new SlotContainer();
+    this.crafting.onContainerUpdate = function() {
+      craftingResult.clear();
+      const recipes = CraftingRegistry.getRecipes();
+      for(let recipe of recipes)
+      {
+        const usedSlots = recipe.matches(this);
+        if (usedSlots)
+        {
+          craftingResult.putItemStack(recipe.getResult(usedSlots), 0, true);
+          break;
+        }
+      }
+    };
 
-    this.crafting = new Container(5, 5);
-    this.craftingResult = new SlotContainer();
+    this.actor = new Actor("Bob");
 
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onSlotClick = this.onSlotClick.bind(this);
     this.onResultClick = this.onResultClick.bind(this);
   }
 
   componentWillMount()
   {
-    document.addEventListener('mousemove', this.onMouseMove);
+    this.inputController.initialize();
   }
 
   componentWillUnmount()
   {
-    document.removeEventListener('mousemove', this.onMouseMove);
-  }
-
-  onMouseMove(e)
-  {
-    this.cursorX = e.clientX;
-    this.cursorY = e.clientY;
-  }
-
-  onSlotClick(container, slotIndex)
-  {
-    if (this.equippedItem)
-    {
-      this.equippedItem = container.putItemStack(this.equippedItem, slotIndex, true);
-    }
-    else
-    {
-      this.equippedItem = container.removeItemStack(slotIndex, 1);
-    }
-
-    this.craftingResult.clear();
-    const recipes = CraftingRegistry.getRecipes();
-    for(let recipe of recipes)
-    {
-      const usedSlots = recipe.matches(this.crafting);
-      if (usedSlots)
-      {
-        this.craftingResult.putItemStack(recipe.getResult(usedSlots), 0, true);
-        break;
-      }
-    }
+    this.inputController.terminate();
   }
 
   onResultClick(container, slotIndex)
@@ -127,10 +113,14 @@ class App extends React.Component
   {
     return <div className="app-container">
       <h1>Craftem</h1>
-      <CursorComponent src={this.equippedItem} x={this.cursorX} y={this.cursorY}/>
-      <ContainerComponent className="player-inventory" title="Inventory" src={this.container} onSlotClick={this.onSlotClick}/>
-      <ContainerComponent className="player-crafting" title="Crafting" src={this.crafting} onSlotClick={this.onSlotClick}/>
-      <ContainerComponent className="player-result" src={this.craftingResult} hideGrid="true" onSlotClick={this.onResultClick}/>
+      {
+        !this.actor.getDialogueTraverser().isFinished() &&
+        <DialogueComponent src={this.actor.getDialogueTraverser().getCurrentDialogue()} onOption={this.actor.getDialogueTraverser().onDialogueOption}/>
+      }
+      <CursorComponent src={this.inputController.getEquippedItem()} x={this.inputController.posX} y={this.inputController.posY}/>
+      <ContainerComponent ref={ref=>this.inputController.containers.set(this.container, ref)} className="player-inventory" src={this.container}/>
+      <ContainerComponent ref={ref=>this.inputController.containers.set(this.crafting, ref)} className="player-crafting" src={this.crafting}/>
+      <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingResult, ref)} className="player-result" src={this.craftingResult} hideGrid="true" onSlotClick={this.onResultClick}/>
     </div>;
   }
 }
