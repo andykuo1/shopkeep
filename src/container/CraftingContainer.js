@@ -15,7 +15,6 @@ class CraftingContainer extends Container
   //Override
   onContainerUpdate()
   {
-    console.log("UPDATE!");
     this.outputContainer.clear();
     const recipes = CraftingRegistry.getRecipes();
     for(let recipe of recipes)

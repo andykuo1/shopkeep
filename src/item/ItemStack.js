@@ -10,19 +10,35 @@ class ItemStack
     this._metadata = metadata;
   }
 
+  overflow(capacity)
+  {
+    const diffSize = this._stackSize - capacity;
+
+    //Try splitting...
+    if (diffSize > 0)
+    {
+      const result = this.copy();
+      result.setStackSize(diffSize);
+      this.setStackSize(capacity);
+      return result;
+    }
+    
+    return null;
+  }
+
   copy()
   {
     const result = new ItemStack(this._item, this._stackSize, this._metadata);
     return result;
   }
 
-  merge(itemStack)
+  merge(itemStack, capacity=Infinity)
   {
     const item = this.getItem();
     const otherItem = itemStack.getItem();
     if (item !== otherItem) return false;
 
-    const maxSize = item.getMaxStackSize();
+    const maxSize = Math.min(item.getMaxStackSize(), capacity);
     const stackSize = this._stackSize;
     if (stackSize < maxSize)
     {

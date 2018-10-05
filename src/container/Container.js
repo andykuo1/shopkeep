@@ -9,6 +9,7 @@ class Container
     this._height = height;
 
     this._slots = new Array(width * height);
+    this._slotCapacity = Infinity;
     this._editable = true;
 
     this.id = guid();
@@ -23,6 +24,12 @@ class Container
   setEditable(editable)
   {
     this._editable = editable;
+    return this;
+  }
+
+  setSlotCapacity(value)
+  {
+    this._slotCapacity = value;
     return this;
   }
 
@@ -68,7 +75,7 @@ class Container
             if (typeof slot == 'object')
             {
               //If successfully merged the entire item stack...
-              if (slot.getItemStack().merge(itemStack))
+              if (slot.getItemStack().merge(itemStack, this._slotCapacity))
               {
                 this.onContainerUpdate();
                 if (itemStack.isEmpty()) return null;
@@ -84,8 +91,9 @@ class Container
         //If found enough empty space...
         if (flag)
         {
+          const result = itemStack.overflow(this._slotCapacity);
           this.addSlot(index, itemStack);
-          return null;
+          return result;
         }
       }
     }
@@ -100,6 +108,12 @@ class Container
     const item = itemStack.getItem();
     const itemWidth = item.getWidth();
     const itemHeight = item.getHeight();
+
+    //Make sure is within capacity before allowing replace...
+    if (itemStack.getStackSize() > this._slotCapacity)
+    {
+      replace = false;
+    }
 
     const containerWidth = this._width;
     const containerHeight = this._height;
@@ -138,7 +152,7 @@ class Container
         {
           //If found similar item to merge...
           const slotStack = slot.getItemStack();
-          if (slotStack.merge(itemStack))
+          if (slotStack.merge(itemStack, this._slotCapacity))
           {
             this.onContainerUpdate();
             return itemStack.isEmpty() ? null : itemStack;
@@ -358,6 +372,11 @@ class Container
   isEditable()
   {
     return this._editable;
+  }
+
+  getSlotCapacity()
+  {
+    return this._slotCapacity;
   }
 
   getWidth()

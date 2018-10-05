@@ -27,10 +27,16 @@ class SlotContainer extends Container
   {
     if (itemStack.getStackSize() <= 0) return null;
 
+    //Make sure is within capacity before allowing replace...
+    if (itemStack.getStackSize() > this._slotCapacity)
+    {
+      replace = false;
+    }
+
     const slot = this._slots[0];
     if (typeof slot == 'object')
     {
-      if (slot.getItemStack().merge(itemStack) && itemStack.isEmpty())
+      if (slot.getItemStack().merge(itemStack, this._slotCapacity) && itemStack.isEmpty())
       {
         return null;
       }
@@ -48,8 +54,9 @@ class SlotContainer extends Container
     }
     else
     {
+      const result = itemStack.overflow(this._slotCapacity);
       this.addSlot(0, itemStack, false);
-      return null;
+      return result;
     }
   }
 

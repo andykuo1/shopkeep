@@ -61,11 +61,11 @@ class App extends React.Component
     this.craftingContainer = new CraftingContainer(5).setName("Crafting");
 
     this.displayContainers = [];
-    this.displayContainers.push(new SlotContainer(true));
-    this.displayContainers.push(new SlotContainer(true));
-    this.displayContainers.push(new SlotContainer(true));
-    this.displayContainers.push(new SlotContainer(true));
-    this.displayContainers.push(new SlotContainer(true));
+    this.displayContainers.push(new SlotContainer(true).setSlotCapacity(1));
+    this.displayContainers.push(new SlotContainer(true).setSlotCapacity(1));
+    this.displayContainers.push(new SlotContainer(true).setSlotCapacity(1));
+    this.displayContainers.push(new SlotContainer(true).setSlotCapacity(1));
+    this.displayContainers.push(new SlotContainer(true).setSlotCapacity(1));
 
     this.actor = new Actor("Bob");
   }
