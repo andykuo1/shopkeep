@@ -1,36 +1,70 @@
 import Container from './Container.js';
-import CraftingResultContainer from './CraftingResultContainer.js';
+import SlotContainer from './SlotContainer.js';
 
 import CraftingRegistry from 'crafting/CraftingRegistry.js';
 
 class CraftingContainer extends Container
 {
-  constructor(craftingSize, outputContainer)
+  constructor(craftingSize)
   {
     super(craftingSize, craftingSize);
 
-    this.outputContainer = outputContainer || new CraftingResultContainer(this);
+    this.outputContainer = new CraftingOutputSlotContainer(this);
   }
 
-  //Override
-  onContainerUpdate()
+  getOutputContainer()
   {
-    this.outputContainer.clear();
+    return this.outputContainer;
+  }
+}
+
+export class CraftingOutputSlotContainer extends SlotContainer
+{
+  constructor(inputContainer)
+  {
+    super();
+
+    this.inputContainer = inputContainer;
+
+    this.onInputContainerUpdate = this.onInputContainerUpdate.bind(this);
+
+    this.inputContainer.on("update", this.onInputContainerUpdate);
+  }
+
+  onInputContainerUpdate(container)
+  {
+    this.clear();
     const recipes = CraftingRegistry.getRecipes();
     for(let recipe of recipes)
     {
-      const usedSlots = recipe.matches(this);
+      const usedSlots = recipe.matches(container);
       if (usedSlots)
       {
-        this.outputContainer.putItemStack(recipe.getResult(usedSlots), 0, true);
-        break;
+        this.putItemStack(recipe.getResult(usedSlots), 0, true);
+        return;
       }
     }
   }
 
-  getResultContainer()
+  //Override
+  onContainerSlot(slotIndex, equippedItemStack)
   {
-    return this.outputContainer;
+    super.onContainerSlot(slotIndex, equippedItemStack);
+
+    const slot = this._slots[0];
+    if (typeof slot == 'object')
+    {
+      const recipes = CraftingRegistry.getRecipes();
+      for(let recipe of recipes)
+      {
+        const result = recipe.applyRecipe(this.inputContainer);
+        if (result)
+        {
+          return result;
+        }
+      }
+    }
+    return null;
   }
 }
 

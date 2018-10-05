@@ -98,7 +98,7 @@ class App extends React.Component
       </div>
       <ContainerComponent ref={ref=>this.inputController.containers.set(this.container, ref)} className="player-inventory" src={this.container}/>
       <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer, ref)} className="player-crafting" src={this.craftingContainer}/>
-      <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer.getResultContainer(), ref)} className="player-result" src={this.craftingContainer.getResultContainer()} hideGrid="true"/>
+      <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer.getOutputContainer(), ref)} className="player-result" src={this.craftingContainer.getOutputContainer()} hideGrid="true"/>
       <CursorComponent src={this.inputController.getEquippedItem()} x={this.inputController.posX} y={this.inputController.posY}/>
     </div>;
   }

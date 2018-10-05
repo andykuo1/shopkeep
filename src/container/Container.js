@@ -1,3 +1,4 @@
+import Eventable from 'util/Eventable.js';
 import { guid } from 'util/MathHelper.js';
 
 class Container
@@ -11,6 +12,9 @@ class Container
     this._slots = new Array(width * height);
     this._slotCapacity = Infinity;
     this._editable = true;
+
+    this.registerEvent("update");
+    this.registerEvent("slot");
 
     this.id = guid();
   }
@@ -33,9 +37,15 @@ class Container
     return this;
   }
 
-  onContainerUpdate() {}
+  onContainerUpdate()
+  {
+    this.emit("update", this);
+  }
 
-  onContainerSlot(slotIndex, equippedItemStack) {}
+  onContainerSlot(slotIndex, equippedItemStack)
+  {
+    this.emit("slot", this, slotIndex, equippedItemStack);
+  }
 
   clear()
   {
@@ -394,6 +404,7 @@ class Container
     return this._slots.length;
   }
 }
+Eventable.mixin(Container);
 
 class ItemSlot
 {
