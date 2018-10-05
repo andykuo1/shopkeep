@@ -9,7 +9,6 @@ import ContainerComponent from 'craftem/components/ContainerComponent.js';
 import CursorComponent from 'craftem/components/CursorComponent.js';
 import DialogueComponent from 'craftem/components/DialogueComponent.js';
 
-import Market from 'craftem/Market.js';
 import Actor from 'craftem/actor/Actor.js';
 
 import * as ItemRenderer from 'craftem/components/ItemRenderer.js';
