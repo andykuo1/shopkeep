@@ -2,12 +2,12 @@ import Container from './Container.js';
 
 class SlotContainer extends Container
 {
-  constructor()
+  constructor(editable=false)
   {
     super(1, 1);
 
     //Override
-    this._editable = false;
+    this._editable = editable;
   }
 
   //Override

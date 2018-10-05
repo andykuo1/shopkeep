@@ -1,3 +1,5 @@
+import { guid } from 'util/MathHelper.js';
+
 class Container
 {
   constructor(width=1, height=1)
@@ -8,6 +10,8 @@ class Container
 
     this._slots = new Array(width * height);
     this._editable = true;
+
+    this.id = guid();
   }
 
   setName(name)

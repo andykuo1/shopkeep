@@ -60,6 +60,13 @@ class App extends React.Component
     }
     this.craftingContainer = new CraftingContainer(5).setName("Crafting");
 
+    this.displayContainers = [];
+    this.displayContainers.push(new SlotContainer(true));
+    this.displayContainers.push(new SlotContainer(true));
+    this.displayContainers.push(new SlotContainer(true));
+    this.displayContainers.push(new SlotContainer(true));
+    this.displayContainers.push(new SlotContainer(true));
+
     this.actor = new Actor("Bob");
   }
 
@@ -82,10 +89,17 @@ class App extends React.Component
         !this.actor.getDialogueTraverser().isFinished() &&
         <DialogueComponent src={this.actor.getDialogueTraverser().getCurrentDialogue()} onOption={this.actor.getDialogueTraverser().onDialogueOption}/>
       }
-      <CursorComponent src={this.inputController.getEquippedItem()} x={this.inputController.posX} y={this.inputController.posY}/>
+      <div>
+      {
+        this.displayContainers.map(e => {
+          return <ContainerComponent key={e.id} ref={ref=>this.inputController.containers.set(e, ref)} className="player-display" src={e} hideGrid="true"/>
+        })
+      }
+      </div>
       <ContainerComponent ref={ref=>this.inputController.containers.set(this.container, ref)} className="player-inventory" src={this.container}/>
       <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer, ref)} className="player-crafting" src={this.craftingContainer}/>
       <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer.getResultContainer(), ref)} className="player-result" src={this.craftingContainer.getResultContainer()} hideGrid="true"/>
+      <CursorComponent src={this.inputController.getEquippedItem()} x={this.inputController.posX} y={this.inputController.posY}/>
     </div>;
   }
 }
