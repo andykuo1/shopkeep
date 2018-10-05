@@ -11,6 +11,16 @@ class Item
     this._height = 1;
 
     this._maxStackSize = 1;
+
+    this._baseValue = 1;
+  }
+
+  setBaseValue(value)
+  {
+    if (value < 0) throw new Error("item base value must be a non-negative integer");
+
+    this._baseValue = value;
+    return this;
   }
 
   setSize(width=1, height=1)
@@ -42,6 +52,11 @@ class Item
   getMaxStackSize()
   {
     return this._maxStackSize;
+  }
+
+  getBaseValue()
+  {
+    return this._baseValue;
   }
 
   getName()

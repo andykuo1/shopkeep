@@ -64,7 +64,7 @@ class Dialogue
     let result = 0;
     for(let item of this.items)
     {
-      result += item.value;
+      result += item.itemStack.getStackSize() * item.value;
     }
     return result;
   }

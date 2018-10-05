@@ -25,7 +25,7 @@ class DialogueComponent extends React.Component
               {
                 ItemRenderer.renderFullItemStack(e.itemStack)
               }
-              <label className="dialogue-item-value">{e.value} gp</label>
+              <label className="dialogue-item-value">{e.itemStack.getStackSize() + " x " + e.value + " gp"}</label>
             </li>;
           })
         }

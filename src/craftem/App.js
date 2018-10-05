@@ -10,6 +10,7 @@ import CursorComponent from 'craftem/components/CursorComponent.js';
 import DialogueComponent from 'craftem/components/DialogueComponent.js';
 
 import Actor from 'craftem/actor/Actor.js';
+import Market from 'craftem/market/Market.js';
 
 import * as ItemRenderer from 'craftem/components/ItemRenderer.js';
 
@@ -67,7 +68,7 @@ class App extends React.Component
     this.displayContainers.push(new SlotContainer(true).setSlotCapacity(1));
     this.displayContainers.push(new SlotContainer(true).setSlotCapacity(1));
 
-    this.actor = new Actor("Bob");
+    this.market = new Market();
   }
 
   componentWillMount()
@@ -85,21 +86,34 @@ class App extends React.Component
   {
     return <div className="app-container">
       <h1>Craftem</h1>
-      {
-        !this.actor.getDialogueTraverser().isFinished() &&
-        <DialogueComponent src={this.actor.getDialogueTraverser().getCurrentDialogue()} onOption={this.actor.getDialogueTraverser().onDialogueOption}/>
-      }
-      <div>
-      {
-        this.displayContainers.map(e => {
-          return <ContainerComponent key={e.id} ref={ref=>this.inputController.containers.set(e, ref)} className="player-display" src={e} hideGrid="true"/>
-        })
-      }
+      <div style={{outline: "1px solid black", maxWidth: 600, maxHeight: 400, overflow: "scroll"}}>
+        <div className="market-container">
+        {
+          this.market.getActors().map(e => {
+            if (!e.getDialogueTraverser().isFinished())
+            {
+              const dialogueTraverser = e.getDialogueTraverser();
+              return <DialogueComponent key={e.id} src={dialogueTraverser.getCurrentDialogue()} onOption={dialogueTraverser.onDialogueOption}/>;
+            }
+            else
+            {
+              return null;
+            }
+          })
+        }
+        </div>
+        <div>
+        {
+          this.displayContainers.map(e => {
+            return <ContainerComponent key={e.id} ref={ref=>this.inputController.containers.set(e, ref)} className="player-display" src={e} hideGrid="true"/>
+          })
+        }
+        </div>
+        <ContainerComponent ref={ref=>this.inputController.containers.set(this.container, ref)} className="player-inventory" src={this.container}/>
+        <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer, ref)} className="player-crafting" src={this.craftingContainer}/>
+        <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer.getOutputContainer(), ref)} className="player-result" src={this.craftingContainer.getOutputContainer()} hideGrid="true"/>
+        <CursorComponent src={this.inputController.getEquippedItem()} x={this.inputController.posX} y={this.inputController.posY}/>
       </div>
-      <ContainerComponent ref={ref=>this.inputController.containers.set(this.container, ref)} className="player-inventory" src={this.container}/>
-      <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer, ref)} className="player-crafting" src={this.craftingContainer}/>
-      <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer.getOutputContainer(), ref)} className="player-result" src={this.craftingContainer.getOutputContainer()} hideGrid="true"/>
-      <CursorComponent src={this.inputController.getEquippedItem()} x={this.inputController.posX} y={this.inputController.posY}/>
     </div>;
   }
 }

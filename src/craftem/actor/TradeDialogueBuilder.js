@@ -1,4 +1,5 @@
 import DialogueBuilder from './DialogueBuilder.js';
+import ItemStack from 'item/ItemStack.js';
 
 class TradeDialogueBuilder
 {
@@ -20,15 +21,26 @@ class TradeDialogueBuilder
     this.sellDialogue = sellDialogue;
   }
 
-  buyItem(itemStack, value)
+  buyItem(item, amount=1)
   {
-    this.buyDialogue.item(itemStack, value);
+    const result = new ItemStack(item, amount);
+    this.buyDialogue.item(result, item.getBaseValue());
     return this;
   }
 
-  sellItem(itemStack, value)
+  buyItemStack(itemStack, amount=1)
   {
-    this.sellDialogue.item(itemStack, value);
+    const result = itemStack.copy();
+    result.setStackSize(amount);
+    this.buyDialogue.item(result, result.getItem().getBaseValue());
+    return this;
+  }
+
+  sellItemStack(itemStack, amount=1)
+  {
+    const result = itemStack.copy();
+    result.setStackSize(amount);
+    this.sellDialogue.item(result, result.getItem().getBaseValue());
     return this;
   }
 

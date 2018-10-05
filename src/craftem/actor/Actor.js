@@ -4,6 +4,8 @@ import TradeDialogueBuilder from './TradeDialogueBuilder.js';
 import ItemStack from 'item/ItemStack.js';
 import ItemRegistry from 'item/ItemRegistry.js';
 
+import { guid } from 'util/MathHelper.js';
+
 class Actor
 {
   constructor(name)
@@ -11,11 +13,13 @@ class Actor
     this.name = name;
 
     const db = new TradeDialogueBuilder();
-    db.buyItem(new ItemStack(ItemRegistry.getItem("oilFlask")), 10);
-    db.buyItem(new ItemStack(ItemRegistry.getItem("rope")), 2);
-    db.buyItem(new ItemStack(ItemRegistry.getItem("oakLog")), 5);
-    db.sellItem(new ItemStack(ItemRegistry.getItem("toughFiber")), 1);
+    db.buyItem(ItemRegistry.getItem("oilFlask"), 10);
+    db.buyItem(ItemRegistry.getItem("rope"), 2);
+    db.buyItem(ItemRegistry.getItem("oakLog"), 5);
+    db.sellItemStack(new ItemStack(ItemRegistry.getItem("toughFiber")), 14);
     this.dialogueTraverser = new DialogueTraverser(db.toDialogue());
+
+    this.id = guid();
   }
 
   getDialogueTraverser()

@@ -13,3 +13,19 @@
 .player-display {
   margin: 5px;
 }
+
+.market-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.market-container > * {
+  opacity: 0.5;
+  width: 10px;
+  pointer-events: none;
+}
+.market-container > *:first-child {
+  opacity: 1.0;
+  flex: 1;
+  pointer-events: auto;
+}

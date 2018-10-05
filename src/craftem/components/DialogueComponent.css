@@ -1,8 +1,11 @@
 .dialogue-container {
   padding: 5px;
   outline: 1px dashed black;
+  overflow: hidden;
+  overflow-y: auto;
 
   max-width: 300px;
+  max-height: 300px;
 }
 
 .dialogue-items {
