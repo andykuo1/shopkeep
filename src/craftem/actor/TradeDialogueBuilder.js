@@ -3,7 +3,7 @@ import ItemStack from 'item/ItemStack.js';
 
 class TradeDialogueBuilder
 {
-  constructor()
+  constructor(inputContainer)
   {
     const db = new DialogueBuilder();
 
@@ -12,7 +12,16 @@ class TradeDialogueBuilder
     const sellDialogue = db.create("Great! Here, I'll trade you:");
 
     rootDialogue.option(null, buyDialogue);
-    buyDialogue.option("Accept", sellDialogue);
+    buyDialogue.option("Accept", sellDialogue, null, (e) => {
+      for(const valueItem of e.items)
+      {
+        if (!inputContainer.hasItem(valueItem.itemStack.getItem(), valueItem.itemStack.getStackSize()))
+        {
+          return false;
+        }
+      }
+      return true;
+    });
     buyDialogue.option("Decline");
     sellDialogue.option("Thank you")
 

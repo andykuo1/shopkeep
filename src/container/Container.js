@@ -1,4 +1,5 @@
 import Eventable from 'util/Eventable.js';
+import ItemStack from 'item/ItemStack.js';
 import { guid } from 'util/MathHelper.js';
 
 class Container
@@ -243,8 +244,44 @@ class Container
     return null;
   }
 
-  hasItem(item)
+  takeItem(item, amount=1)
   {
+    let result = new ItemStack(item, 0);
+    let slot, slotStack, slotItem;
+    for(let i = 0, length = this._slots.length; i < length; ++i)
+    {
+      slot = this._slots[i];
+      if (typeof slot == 'object')
+      {
+        slotStack = slot.getItemStack();
+        slotItem = slotStack.getItem();
+
+        if (slotItem === item)
+        {
+          if (result.merge(slotStack, amount))
+          {
+            if (slotStack.isEmpty())
+            {
+              this.removeSlot(i, true);
+            }
+
+            if (result.getStackSize() >= amount)
+            {
+              return result;
+            }
+          }
+        }
+
+        //Skip over self-indices
+        i += slotItem.getWidth() - 1;
+      }
+    }
+    return result.isEmpty() ? null : result;
+  }
+
+  hasItem(item, minAmount=1)
+  {
+    let amount = 0;
     let slot, slotItem;
     for(let i = 0, length = this._slots.length; i < length; ++i)
     {
@@ -252,15 +289,18 @@ class Container
       if (typeof slot == 'object')
       {
         slotItem = slot.getItemStack().getItem();
+
         if (slotItem === item)
         {
-          return true;
+          amount += slot.getItemStack().getStackSize();
+          if (amount >= minAmount)
+          {
+            return true;
+          }
         }
-        else
-        {
-          //Skip over self-indices
-          i += slotItem.getWidth();
-        }
+
+        //Skip over self-indices
+        i += slotItem.getWidth();
       }
     }
     return false;

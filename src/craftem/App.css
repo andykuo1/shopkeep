@@ -10,6 +10,11 @@
   margin: 5px;
 }
 
+.display-container {
+  display: flex;
+  flex-direction: row;
+}
+
 .player-display {
   margin: 5px;
 }

@@ -28,10 +28,10 @@ class DialogueBuilder
     return this;
   }
 
-  option(label, target=null, callback=null)
+  option(label, target=null, callback=null, conditional=null)
   {
     if (target instanceof DialogueBuilder) target = target.toDialogue();
-    const result = new DialogueOption(label, target, callback);
+    const result = new DialogueOption(this.parent, label, target, callback, conditional);
     this.parent.options.push(result);
     return this;
   }
@@ -61,12 +61,12 @@ class Dialogue
 
   getTotalItemValue()
   {
-    let result = 0;
+    let totalValue = 0;
     for(let item of this.items)
     {
-      result += item.itemStack.getStackSize() * item.value;
+      totalValue += item.itemStack.getStackSize() * item.value;
     }
-    return result;
+    return totalValue;
   }
 
   hasItems()
@@ -77,13 +77,20 @@ class Dialogue
 
 class DialogueOption
 {
-  constructor(label, target=null, callback=null)
+  constructor(parent, label, target=null, callback=null, conditional=null)
   {
+    this.parent = parent;
     this.label = label;
     this.target = target;
     this.callback = callback;
+    this.conditional = conditional;
 
     this.id = guid();
+  }
+
+  isEnabled()
+  {
+    return !this.conditional || this.conditional(this.parent);
   }
 
   isExitOption()

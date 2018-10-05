@@ -44,7 +44,7 @@ class DialogueComponent extends React.Component
       <div className="dialogue-option-container">
       {
         src.options.map((e, i) => {
-          return <button key={e.id} className="dialogue-option" onClick={() => this.props.onOption && this.props.onOption(e)}>{e.label || "Next"}</button>;
+          return <button key={e.id} className="dialogue-option" disabled={!e.isEnabled()} onClick={() => this.props.onOption && this.props.onOption(e)}>{e.label || "Next"}</button>;
         })
       }
       </div>

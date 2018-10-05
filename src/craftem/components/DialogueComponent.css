@@ -4,8 +4,7 @@
   overflow: hidden;
   overflow-y: auto;
 
-  max-width: 300px;
-  max-height: 300px;
+  max-width: 220px;
 }
 
 .dialogue-items {
@@ -60,4 +59,9 @@
 
 .dialogue-option:hover {
   background: lightgray;
+}
+
+.dialogue-option:disabled {
+  background: gray;
+  pointer-events: none;
 }

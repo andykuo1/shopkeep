@@ -8,11 +8,11 @@ import { guid } from 'util/MathHelper.js';
 
 class Actor
 {
-  constructor(name)
+  constructor(name, inputContainer)
   {
     this.name = name;
 
-    const db = new TradeDialogueBuilder();
+    const db = new TradeDialogueBuilder(inputContainer);
     db.buyItem(ItemRegistry.getItem("oilFlask"), 10);
     db.buyItem(ItemRegistry.getItem("rope"), 2);
     db.buyItem(ItemRegistry.getItem("oakLog"), 5);

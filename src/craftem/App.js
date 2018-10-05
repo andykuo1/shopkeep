@@ -68,7 +68,7 @@ class App extends React.Component
     this.displayContainers.push(new SlotContainer(true).setSlotCapacity(1));
     this.displayContainers.push(new SlotContainer(true).setSlotCapacity(1));
 
-    this.market = new Market();
+    this.market = new Market(this.container);
   }
 
   componentWillMount()
@@ -86,7 +86,27 @@ class App extends React.Component
   {
     return <div className="app-container">
       <h1>Craftem</h1>
+      <button onClick={e => {
+        if (!this.inputController.equippedItem)
+        {
+          const result = this.container.takeItem(OAK_WOOD, 4);
+          this.inputController.equippedItem = result;
+        }
+      }}>Take 4 woods</button>
       <div style={{outline: "1px solid black", maxWidth: 600, maxHeight: 400, overflow: "scroll"}}>
+        <ContainerComponent ref={ref=>this.inputController.containers.set(this.container, ref)} className="player-inventory" src={this.container}/>
+        <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer, ref)} className="player-crafting" src={this.craftingContainer}/>
+        <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer.getOutputContainer(), ref)} className="player-result" src={this.craftingContainer.getOutputContainer()} hideGrid="true"/>
+        <CursorComponent src={this.inputController.getEquippedItem()} x={this.inputController.posX} y={this.inputController.posY}/>
+
+        <div className="display-container">
+        {
+          this.displayContainers.map(e => {
+            return <ContainerComponent key={e.id} ref={ref=>this.inputController.containers.set(e, ref)} className="player-display" src={e} hideGrid="true"/>
+          })
+        }
+        </div>
+
         <div className="market-container">
         {
           this.market.getActors().map(e => {
@@ -102,17 +122,6 @@ class App extends React.Component
           })
         }
         </div>
-        <div>
-        {
-          this.displayContainers.map(e => {
-            return <ContainerComponent key={e.id} ref={ref=>this.inputController.containers.set(e, ref)} className="player-display" src={e} hideGrid="true"/>
-          })
-        }
-        </div>
-        <ContainerComponent ref={ref=>this.inputController.containers.set(this.container, ref)} className="player-inventory" src={this.container}/>
-        <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer, ref)} className="player-crafting" src={this.craftingContainer}/>
-        <ContainerComponent ref={ref=>this.inputController.containers.set(this.craftingContainer.getOutputContainer(), ref)} className="player-result" src={this.craftingContainer.getOutputContainer()} hideGrid="true"/>
-        <CursorComponent src={this.inputController.getEquippedItem()} x={this.inputController.posX} y={this.inputController.posY}/>
       </div>
     </div>;
   }
