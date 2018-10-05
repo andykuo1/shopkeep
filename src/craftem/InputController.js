@@ -124,6 +124,12 @@ class InputController
             if (this.equippedItem) resetSelection = true;
           }
         }
+
+        const result = container.onContainerSlot(slotIndex, this.equippedItem);
+        if (result)
+        {
+          this.equippedItem = result;
+        }
         break;
       }
     }

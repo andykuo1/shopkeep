@@ -24,6 +24,8 @@ class Container
 
   onContainerUpdate() {}
 
+  onContainerSlot(slotIndex, equippedItemStack) {}
+
   clear()
   {
     for(let i = 0, length = this._slots.length; i < length; ++i)
