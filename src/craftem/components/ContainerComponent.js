@@ -51,10 +51,19 @@ class ContainerComponent extends React.Component
     const containerWidth = container.getWidth();
     const callback = this.props.onSlotClick;
     const hiddenStyle = {outline: "none"};
+    const useImage = true;
 
     for(let i = 0, length = container.getWidth() * container.getHeight(); i < length; ++i)
     {
       result.push(
+        useImage ?
+        <image key={i} className={"itemslot " + (this.selectedSlots.includes(i) ? "select" : "")}
+          x={(i % containerWidth) * slotWidth + offsetX}
+          y={Math.floor(i / containerWidth) * slotHeight + offsetY}
+          width={slotWidth} height={slotHeight}
+          style={hidden ? hiddenStyle : null}
+          xlinkHref={"./res/images/itemSlot.png"}/>
+        :
         <rect key={i} className={"itemslot " + (this.selectedSlots.includes(i) ? "select" : "")}
           x={(i % containerWidth) * slotWidth + offsetX}
           y={Math.floor(i / containerWidth) * slotHeight + offsetY}

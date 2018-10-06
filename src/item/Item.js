@@ -1,17 +1,14 @@
 class Item
 {
-  constructor(name, color="dodgerblue")
+  constructor(name)
   {
     this._name = name;
-
-    //HACK: this is temp
-    this.color = color;
-    this._texture = "images/300.png";
+    this._texture = "";
 
     this._width = 1;
     this._height = 1;
 
-    this._maxStackSize = 1;
+    this._maxStackSize = 64;
 
     this._baseValue = 1;
   }
@@ -44,6 +41,11 @@ class Item
   {
     this._maxStackSize = stackSize;
     return this;
+  }
+
+  onCraftResult(itemStack, itemSlot, craftingContainer, recipe, resultItem)
+  {
+    craftingContainer.removeItemStack(itemSlot.getRootIndex(), 1);
   }
 
   getWidth()

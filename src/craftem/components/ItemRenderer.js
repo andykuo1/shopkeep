@@ -28,7 +28,7 @@ export function renderItemStack(itemStack, x=0, y=0, slotWidth=32, slotHeight=32
   <rect className="itemstack-item"
     x={left} y={top}
     width={width} height={height}
-    style={{fill: item.color}}/>
+    style={{fill: "slategray"}}/>
   */
   return <g key={itemStack.getID()} className="itemstack">
     <image className="itemstack-item"
@@ -36,6 +36,8 @@ export function renderItemStack(itemStack, x=0, y=0, slotWidth=32, slotHeight=32
       width={width} height={height}
       xlinkHref={"./res/" + item.getTextureName()}/>
     <text className="itemstack-size"
-      x={left + width - padding} y={top + height - padding}>{itemStack.getStackSize()}</text>
+      x={left + width - padding} y={top + height - padding}>
+      {itemStack.getStackSize()}
+    </text>
   </g>;
 };

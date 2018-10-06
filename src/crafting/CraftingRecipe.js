@@ -17,12 +17,13 @@ class CraftingRecipe
     const usedSlots = this.matches(container);
     if (usedSlots)
     {
+      const result = this.getResult(usedSlots);
       for(let slot of usedSlots)
       {
-        container.removeItemStack(slot.getRootIndex(), 1);
+        const itemStack = slot.getItemStack();
+        itemStack.getItem().onCraftResult(itemStack, slot, container, this, result);
       }
-
-      return this.getResult(usedSlots);
+      return result;
     }
     else
     {
@@ -117,6 +118,9 @@ function matchesPattern(container, pattern, itemMap, offsetX=0, offsetY=0, patte
           }
           else if (used.includes(slot))
           {
+            //TODO: not sure when this is relevant...
+            //TODO: IF it is not, then add canCraft() to item.
+
             //Already used slot, must ensure enough amount
             let stackSize = slot.getItemStack().getStackSize();
             let slotIndex = 0;
