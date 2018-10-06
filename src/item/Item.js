@@ -6,6 +6,7 @@ class Item
 
     //HACK: this is temp
     this.color = color;
+    this._texture = "images/300.png";
 
     this._width = 1;
     this._height = 1;
@@ -13,6 +14,12 @@ class Item
     this._maxStackSize = 1;
 
     this._baseValue = 1;
+  }
+
+  setTextureName(textureName)
+  {
+    this._texture = textureName;
+    return this;
   }
 
   setBaseValue(value)
@@ -57,6 +64,11 @@ class Item
   getBaseValue()
   {
     return this._baseValue;
+  }
+
+  getTextureName()
+  {
+    return this._texture;
   }
 
   getName()

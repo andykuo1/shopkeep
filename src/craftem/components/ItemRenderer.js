@@ -1,4 +1,6 @@
 import React from 'react';
+import './ItemRenderer.css';
+
 import ItemStack from 'item/ItemStack.js';
 
 export function renderFullItemStack(itemStack, slotWidth=32, slotHeight=32, padding=2)
@@ -22,11 +24,17 @@ export function renderItemStack(itemStack, x=0, y=0, slotWidth=32, slotHeight=32
   const top = y + padding;
   const width = slotWidth * item.getWidth() - (padding * 2);
   const height = slotHeight * item.getHeight() - (padding * 2);
+  /*
+  <rect className="itemstack-item"
+    x={left} y={top}
+    width={width} height={height}
+    style={{fill: item.color}}/>
+  */
   return <g key={itemStack.getID()} className="itemstack">
-    <rect className="itemstack-item"
+    <image className="itemstack-item"
       x={left} y={top}
       width={width} height={height}
-      style={{fill: item.color}}/>
+      xlinkHref={"./res/" + item.getTextureName()}/>
     <text className="itemstack-size"
       x={left + width - padding} y={top + height - padding}>{itemStack.getStackSize()}</text>
   </g>;
