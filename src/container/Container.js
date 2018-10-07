@@ -105,8 +105,28 @@ class Container
   onCursorExtract(cursor, slotIndex)
   {
     //Pick it up.
-    const result = this.getItemStack(slotIndex);
-    this.removeSlot(slotIndex);
+    let result = this.getItemStack(slotIndex);
+
+    if (cursor.isPrecisionMode())
+    {
+      const newStackSize = result.getStackSize() - 1;
+      if (newStackSize <= 0)
+      {
+        this.removeSlot(slotIndex);
+      }
+      else
+      {
+        result.setStackSize(newStackSize);
+
+        result = result.copy();
+        result.setStackSize(1);
+      }
+    }
+    else
+    {
+      this.removeSlot(slotIndex);
+    }
+
     cursor.setEquippedItemStack(result);
     return true;
   }

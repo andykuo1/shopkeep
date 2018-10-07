@@ -14,6 +14,9 @@ class InputController
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
   }
 
   initialize(containers)
@@ -22,17 +25,37 @@ class InputController
 
     document.addEventListener('mousedown', this.onMouseDown);
     document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('keydown', this.onKeyDown);
+    document.addEventListener('keyup', this.onKeyUp);
   }
 
   destroy()
   {
     document.removeEventListener('mousedown', this.onMouseDown);
     document.removeEventListener('mousemove', this.onMouseMove);
+    document.removeEventListener('keydown', this.onKeyDown);
+    document.removeEventListener('keyup', this.onKeyUp);
 
     if (this.isDown)
     {
       document.removeEventListener('mouseup', this.onMouseUp);
       this.isDown = false;
+    }
+  }
+
+  onKeyDown(e)
+  {
+    if (e.key == "Shift")
+    {
+      this.cursor.setPrecisionMode(true);
+    }
+  }
+
+  onKeyUp(e)
+  {
+    if (e.key == "Shift")
+    {
+      this.cursor.setPrecisionMode(false);
     }
   }
 

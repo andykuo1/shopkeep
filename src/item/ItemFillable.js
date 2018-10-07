@@ -26,8 +26,16 @@ class ItemFillable extends Item
     const metadata = itemStack.getMetadata() + 1;
     if (metadata >= this.maxFillAmount)
     {
-      craftingContainer.removeItemStack(itemSlot.getRootIndex(), 1);
-      craftingContainer.putItemStack(new ItemStack(this.containerItem), itemSlot.getRootIndex(), false, true);
+      const newStackSize = itemStack.getStackSize() - 1;
+      if (newStackSize <= 0)
+      {
+        craftingContainer.removeSlot(itemSlot.getRootIndex());
+      }
+      else
+      {
+        itemStack.setStackSize(newStackSize);
+      }
+      craftingContainer.addItemStack(new ItemStack(this.containerItem), itemSlot.getRootIndex(), false);
     }
     else
     {
