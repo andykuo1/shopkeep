@@ -3,7 +3,7 @@ class Item
   constructor(name)
   {
     this._name = name;
-    this._texture = "";
+    this._texture = "images/300.png";
 
     this._width = 1;
     this._height = 1;
@@ -45,7 +45,15 @@ class Item
 
   onCraftResult(itemStack, itemSlot, craftingContainer, recipe, resultItem)
   {
-    craftingContainer.removeItemStack(itemSlot.getRootIndex(), 1);
+    const newStackSize = itemStack.getStackSize() - 1;
+    if (newStackSize <= 0)
+    {
+      craftingContainer.removeSlot(itemSlot.getRootIndex());
+    }
+    else
+    {
+      itemStack.setStackSize(newStackSize);
+    }
   }
 
   getWidth()

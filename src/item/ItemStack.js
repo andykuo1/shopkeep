@@ -10,22 +10,6 @@ class ItemStack
     this._metadata = metadata;
   }
 
-  overflow(capacity)
-  {
-    const diffSize = this._stackSize - capacity;
-
-    //Try splitting...
-    if (diffSize > 0)
-    {
-      const result = this.copy();
-      result.setStackSize(diffSize);
-      this.setStackSize(capacity);
-      return result;
-    }
-    
-    return null;
-  }
-
   copy()
   {
     const result = new ItemStack(this._item, this._stackSize, this._metadata);
@@ -66,6 +50,22 @@ class ItemStack
       //No more room to merge
       return false;
     }
+  }
+  
+  overflow(capacity)
+  {
+    const diffSize = this._stackSize - capacity;
+
+    //Try splitting...
+    if (diffSize > 0)
+    {
+      const result = this.copy();
+      result.setStackSize(diffSize);
+      this.setStackSize(capacity);
+      return result;
+    }
+
+    return null;
   }
 
   setItem(item)
