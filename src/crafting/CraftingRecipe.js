@@ -96,7 +96,7 @@ function matchesPattern(container, pattern, itemMap, offsetX=0, offsetY=0, patte
       else if (nextSymbol != '*')
       {
         index = x + y * containerWidth;
-        slot = container.getSlotByIndex(index);
+        slot = container.getSlot(index);
         if (typeof slot == 'object')
         {
           if (nextSymbol == '.')

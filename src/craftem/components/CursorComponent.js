@@ -1,29 +1,33 @@
 import React from 'react';
-import './CursorComponent.css';
 
-import { renderItemStack } from './ItemRenderer.js';
+import ItemComponent from './ItemComponent.js';
+import InputController from './InputController.js';
 
 class CursorComponent extends React.Component
 {
   constructor()
   {
     super();
+
+    this.controller = new InputController();
+  }
+
+  //Override
+  componentDidMount()
+  {
+    this.controller.initialize(this.props.containers);
+  }
+
+  //Override
+  componentWillUnmount()
+  {
+    this.controller.destroy();
   }
 
   //Override
   render()
   {
-    const src = this.props.src;
-    const x = this.props.x;
-    const y = this.props.y;
-    const maxItemSize = 96;
-    return <svg className="cursoritem"
-    width={maxItemSize} height={maxItemSize}
-    style={{left: x, top: y}}>
-    {
-      renderItemStack(src)
-    }
-    </svg>;
+    return <ItemComponent src={this.controller.cursor.getEquippedItemStack()} x={this.controller.posX} y={this.controller.posY}/>;
   }
 }
 

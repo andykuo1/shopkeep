@@ -1,7 +1,7 @@
 import React from 'react';
 import './ContainerComponent.css';
 
-import { renderItemStack } from './ItemRenderer.js';
+import ItemComponent from './ItemComponent.js';
 
 class ContainerComponent extends React.Component
 {
@@ -49,7 +49,6 @@ class ContainerComponent extends React.Component
   {
     const result = [];
     const containerWidth = container.getWidth();
-    const callback = this.props.onSlotClick;
     const hiddenStyle = {outline: "none"};
     const useImage = true;
 
@@ -78,17 +77,18 @@ class ContainerComponent extends React.Component
   renderContainerItems(container, offsetX, offsetY, slotWidth, slotHeight)
   {
     const containerWidth = container.getWidth();
-    return container.getSlots().map((e, i) => {
+    return container._slots.map((e, i) => {
       if (!e) return null;
 
       const index = e.getRootIndex();
       //Only render if root index...
       if (i != index) return null;
 
-      return renderItemStack(e.getItemStack(),
-        (index % containerWidth) * slotWidth + offsetX,
-        Math.floor(index / containerWidth) * slotHeight + offsetY,
-        slotWidth, slotHeight);
+      return <ItemComponent key={e.getItemStack().getID()}
+        src={e.getItemStack()} embedded="true"
+        x={(index % containerWidth) * slotWidth + offsetX}
+        y={Math.floor(index / containerWidth) * slotHeight + offsetY}
+        slotWidth={slotWidth} slotHeight={slotHeight}/>;
     });
   }
 
@@ -103,7 +103,7 @@ class ContainerComponent extends React.Component
     const src = this.props.src;
     const containerWidth = src.getWidth();
     const containerHeight = src.getHeight();
-    const containerTitle = src.getName();
+    const containerTitle = this.props.hideName ? null : src.getName();
     const headerHeight = containerTitle ? 18 : 0;
 
     const width = this.props.width || containerWidth * 32;

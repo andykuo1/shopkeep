@@ -12,10 +12,13 @@ class Actor
   {
     this.name = name;
 
+    const items = Array.from(ItemRegistry.getItems());
     const db = new TradeDialogueBuilder(inputContainer);
-    db.buyItem(ItemRegistry.getItem("oilFlask"), 10);
-    db.buyItem(ItemRegistry.getItem("rope"), 2);
-    db.buyItem(ItemRegistry.getItem("oakLog"), 5);
+    for(let i = Math.floor(Math.random() * 4); i >= 0; --i)
+    {
+      const item = items[Math.floor(Math.random() * items.length)];
+      db.buyItem(item, 1 + Math.floor(Math.random() * 4));
+    }
     db.sellItemStack(new ItemStack(ItemRegistry.getItem("toughFiber")), 14);
     this.dialogueTraverser = new DialogueTraverser(db.toDialogue());
 

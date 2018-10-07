@@ -1,7 +1,7 @@
 import React from 'react';
 import './DialogueComponent.css';
 
-import * as ItemRenderer from './ItemRenderer.js';
+import ItemComponent from './ItemComponent.js';
 
 class DialogueComponent extends React.Component
 {
@@ -22,9 +22,7 @@ class DialogueComponent extends React.Component
         {
           src.items.map((e, i) => {
             return <li key={e.itemStack.getID()}>
-              {
-                ItemRenderer.renderFullItemStack(e.itemStack)
-              }
+              <ItemComponent src={e.itemStack}/>
               <label className="dialogue-item-value">{e.itemStack.getStackSize() + " x " + e.value + " gp"}</label>
             </li>;
           })

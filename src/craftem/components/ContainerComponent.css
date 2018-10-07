@@ -20,20 +20,3 @@
 .itemslot.select {
   opacity: 0.5;
 }
-
-.itemstack {
-  pointer-events: none;
-}
-
-.itemstack-item {
-  fill: dodgerblue;
-}
-
-.itemstack-size {
-  fill: white;
-  font-family: sans-serif;
-  font-size: 12px;
-
-  text-anchor: end;
-  alignment-baseline: auto;
-}

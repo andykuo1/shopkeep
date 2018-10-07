@@ -1,3 +1,5 @@
+import ContainerCursor from 'container/ContainerCursor.js';
+
 class InputController
 {
   constructor()
@@ -5,28 +7,24 @@ class InputController
     this.posX = 0;
     this.posY = 0;
     this.isDown = false;
+    this.containers = null;
 
-    this.equippedItem = null;
-
-    this.containers = new Map();
+    this.cursor = new ContainerCursor();
 
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
   }
 
-  getEquippedItem()
+  initialize(containers)
   {
-    return this.equippedItem;
-  }
+    this.containers = containers;
 
-  initialize()
-  {
     document.addEventListener('mousedown', this.onMouseDown);
     document.addEventListener('mousemove', this.onMouseMove);
   }
 
-  terminate()
+  destroy()
   {
     document.removeEventListener('mousedown', this.onMouseDown);
     document.removeEventListener('mousemove', this.onMouseMove);
@@ -65,15 +63,6 @@ class InputController
         }
       }
     }
-
-    if (this.equippedItem)
-    {
-      //Start putting down...
-    }
-    else
-    {
-      //Wait to pick up...
-    }
   }
 
   onMouseMove(e)
@@ -109,27 +98,7 @@ class InputController
       if (slotIndex >= 0)
       {
         const container = element.getContainer();
-        if (container.isEditable())
-        {
-          //Put item down
-          if (this.equippedItem)
-          {
-            this.equippedItem = container.putItemStack(this.equippedItem, slotIndex, true);
-            if (!this.equippedItem) resetSelection = true;
-          }
-          //Pick item up
-          else
-          {
-            this.equippedItem = container.removeItemStack(slotIndex, 1);
-            if (this.equippedItem) resetSelection = true;
-          }
-        }
-
-        const result = container.onContainerSlot(slotIndex, this.equippedItem);
-        if (result)
-        {
-          this.equippedItem = result;
-        }
+        container.onCursorInteract(this.cursor, slotIndex);
         break;
       }
     }

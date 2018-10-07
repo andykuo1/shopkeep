@@ -1,0 +1,14 @@
+.itemstack-container {
+  pointer-events: none;
+}
+
+.itemstack-size {
+  text-shadow: 2px 2px 4px black;
+  
+  fill: white;
+  font-family: sans-serif;
+  font-size: 12px;
+
+  text-anchor: end;
+  alignment-baseline: auto;
+}

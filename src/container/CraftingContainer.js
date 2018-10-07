@@ -5,11 +5,19 @@ import CraftingRegistry from 'crafting/CraftingRegistry.js';
 
 class CraftingContainer extends Container
 {
-  constructor(craftingSize)
+  constructor(name, craftingSize)
   {
-    super(craftingSize, craftingSize);
+    super(name, craftingSize, craftingSize);
 
-    this.outputContainer = new CraftingOutputSlotContainer(this);
+    this.outputContainer = new CraftingOutputContainer(this);
+  }
+
+  //Override
+  onCursorInteract(cursor, slotIndex)
+  {
+    super.onCursorInteract(cursor, slotIndex);
+
+    this.outputContainer.onCraftingUpdate(this);
   }
 
   getOutputContainer()
@@ -18,20 +26,42 @@ class CraftingContainer extends Container
   }
 }
 
-export class CraftingOutputSlotContainer extends SlotContainer
+export default CraftingContainer;
+
+export class CraftingOutputContainer extends SlotContainer
 {
   constructor(inputContainer)
   {
-    super();
+    super(inputContainer.getName() + ".output");
 
     this.inputContainer = inputContainer;
-
-    this.onInputContainerUpdate = this.onInputContainerUpdate.bind(this);
-
-    this.inputContainer.on("update", this.onInputContainerUpdate);
   }
 
-  onInputContainerUpdate(container)
+  //Override
+  onCursorInteract(cursor, slotIndex)
+  {
+    const result = super.onCursorInteract(cursor, slotIndex);
+    this.onCraftingUpdate(this.inputContainer);
+    return result;
+  }
+
+  //Override
+  onCursorExtract(cursor, slotIndex)
+  {
+    const recipes = CraftingRegistry.getRecipes();
+    for(let recipe of recipes)
+    {
+      const result = recipe.applyRecipe(this.inputContainer);
+      if (result)
+      {
+        cursor.setEquippedItemStack(result);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  onCraftingUpdate(container)
   {
     this.clear();
     const recipes = CraftingRegistry.getRecipes();
@@ -45,27 +75,4 @@ export class CraftingOutputSlotContainer extends SlotContainer
       }
     }
   }
-
-  //Override
-  onContainerSlot(slotIndex, equippedItemStack)
-  {
-    super.onContainerSlot(slotIndex, equippedItemStack);
-
-    const slot = this._slots[0];
-    if (typeof slot == 'object')
-    {
-      const recipes = CraftingRegistry.getRecipes();
-      for(let recipe of recipes)
-      {
-        const result = recipe.applyRecipe(this.inputContainer);
-        if (result)
-        {
-          return result;
-        }
-      }
-    }
-    return null;
-  }
 }
-
-export default CraftingContainer;

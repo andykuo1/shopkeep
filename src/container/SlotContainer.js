@@ -1,105 +1,187 @@
 import Container from './Container.js';
+import { ContainerSlot } from './Container.js';
 
 class SlotContainer extends Container
 {
-  constructor(editable=false)
+  constructor(name, maxItemWidth=Infinity, maxItemHeight=Infinity)
   {
-    super(1, 1);
+    super(name, 1, 1);
 
-    //Override
-    this._editable = editable;
+    this._slot = new SlotContainerSlot(this);
+
+    this._maxItemWidth = maxItemWidth;
+    this._maxItemHeight = maxItemHeight;
   }
 
   //Override
-  clear()
+  onCursorInteract(cursor, slotIndex=0)
   {
-    this._slots[0] = undefined;
+    //Ignores slotIndex...
+    return super.onCursorInteract(cursor, 0);
   }
 
-  //Override
-  addItemStack(itemStack)
+  //Overrride
+  tryFillItemStack(itemStack, merge=true)
   {
-    return this.putItemStack(itemStack, 0, false);
-  }
-
-  //Override
-  putItemStack(itemStack, slotIndex=0, replace=false)
-  {
-    if (itemStack.getStackSize() <= 0) return null;
-
-    //Make sure is within capacity before allowing replace...
-    if (itemStack.getStackSize() > this._slotCapacity)
-    {
-      replace = false;
-    }
+    const item = itemStack.getItem();
+    const itemWidth = item.getWidth();
+    const itemHeight = item.getHeight();
 
     const slot = this._slots[0];
+
+    //Found collision...
     if (typeof slot == 'object')
     {
-      if (slot.getItemStack().merge(itemStack, this._slotCapacity) && itemStack.isEmpty())
+      //Try merging both itemstacks...
+      if (merge && slot.getItemStack().merge(itemStack, this._capacity))
       {
-        return null;
-      }
-      else if (replace)
-      {
-        const result = slot.getItemStack();
-        this.removeSlot(0, false);
-        this.addSlot(0, itemStack, false);
-        return result;
-      }
-      else
-      {
-        return itemStack;
+        //If completely merged, we done it! Success!
+        if (itemStack.isEmpty()) return null;
+
+        //Otherwise, just continue...
       }
     }
-    else
+    else if (this.isEmptySlot(0, itemWidth, itemHeight))
     {
-      const result = itemStack.overflow(this._slotCapacity);
-      this.addSlot(0, itemStack, false);
-      return result;
+      //Found empty space! Success!
+      this.addSlot(0, itemStack);
+      return null;
     }
+
+    return itemStack;
   }
 
   //Override
-  removeItemStack(slotIndex, amount=Infinity)
+  getItemStack(slotIndex=0)
   {
-    return super.removeItemStack(0, amount);
-  }
-
-  //Override
-  hasItem(item)
-  {
+    //Ignores slotIndex...
     const slot = this._slots[0];
-    return typeof slot == 'object' && slot.getItemStack().getItem() === item;
+    return typeof slot == 'object' ? slot.getItemStack() : null;
   }
 
   //Override
-  addSlot(slotIndex, itemStack, fill=false)
+  addSlot(slotIndex, itemStack)
   {
-    if (fill) throw new Error("Cannot fill slot container");
-    return super.addSlot(slotIndex, itemStack, false);
+    //Ignores slotIndex...
+    const result = this._slot;
+    result.setItemStack(itemStack);
+    this._slotsOnly.add(result);
+    return result;
   }
 
   //Override
-  removeSlot(slotIndex, clear=false)
+  getSlot(slotIndex=0)
   {
-    if (clear) throw new Error("Cannot clear slot container");
-    return super.removeSlot(slotIndex, false);
+    //Ignores slotIndex...
+    return this._slots[0];
+  }
+
+  //Override
+  checkBounds(slotIndex=0, width=1, height=1)
+  {
+    //Ignores slotIndex...
+    if (width > this._maxItemWidth) return -1;
+    if (height > this._maxItemHeight) return -1;
+    return 0;
+  }
+
+  //Override
+  isEmptySlot(slotIndex=0, width=1, height=1)
+  {
+    //Ignores slotIndex...
+    return typeof this._slots[0] == 'object';
   }
 
   //Override
   getWidth()
   {
-    const itemStack = this.getItemStack(0);
-    return itemStack ? itemStack.getItem().getWidth() : super.getWidth();
+    const slot = this._slots[0];
+    if (typeof slot == 'object')
+    {
+      return slot.getWidth();
+    }
+    else
+    {
+      return super.getWidth();
+    }
   }
 
   //Override
   getHeight()
   {
-    const itemStack = this.getItemStack(0);
-    return itemStack ? itemStack.getItem().getHeight() : super.getHeight();
+    const slot = this._slots[0];
+    if (typeof slot == 'object')
+    {
+      return slot.getHeight();
+    }
+    else
+    {
+      return super.getHeight();
+    }
   }
 }
 
 export default SlotContainer;
+
+export class SlotContainerSlot extends ContainerSlot
+{
+  constructor(parent)
+  {
+    super(parent, 0);
+  }
+
+  //Override
+  clear()
+  {
+    if (!this._itemStack) return;
+
+    //Remove from the container's slots
+    const container = this._parent;
+    container._slots[0] = undefined;
+
+    //Reset values
+    this._itemStack = null;
+    this._width = 0;
+    this._height = 0;
+  }
+
+  //Override
+  move(slotIndex, newItemStack=null)
+  {
+    const itemStack = this._itemStack;
+    if (itemStack)
+    {
+      //Clear from previous position in the container's slots
+      this.clear();
+    }
+
+    //Index will never change, making this the same as setItemStack()
+
+    //Set to new position in the container's slots
+    this.setItemStack(newItemStack || itemStack);
+    return itemStack;
+  }
+
+  //Override
+  setItemStack(itemStack)
+  {
+    const prev = this._itemStack;
+
+    if (!itemStack)
+    {
+      this.clear();
+      return prev;
+    }
+
+    const container = this._parent;
+    const item = itemStack.getItem();
+
+    //Add to the container's slots
+    container._slots[0] = this;
+
+    this._itemStack = itemStack;
+    this._width = item.getWidth();
+    this._height = item.getHeight();
+    return prev;
+  }
+}
