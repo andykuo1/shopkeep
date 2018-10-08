@@ -5,9 +5,52 @@ class ItemStack
   constructor(item, stackSize=1, metadata=0)
   {
     this._id = guid();
+
+    //The item in the stack
     this._item = item;
+
+    //Number of items in the stack
     this._stackSize = stackSize;
+
+    //Used by other item logic, ie durability
     this._metadata = metadata;
+
+    //Used by other item logic, ie color
+    //this._variance = 0;
+    //4 bits for Hue
+    //4 bits for saturation
+    //4 bits for Lightness
+    //4 bits for quality
+
+    //The quality of the items in the stack
+    //this._quality = 0;
+
+    //16-bits
+    //0000 0000 0000 0000
+  }
+
+  setStackSize(stackSize)
+  {
+    this._stackSize = stackSize;
+    return this;
+  }
+
+  setMetadata(metadata)
+  {
+    this._metadata = metadata;
+    return this;
+  }
+
+  setItem(item)
+  {
+    this._item = item;
+    return this;
+  }
+
+  setQuality(quality)
+  {
+    this._quality = quality;
+    return this;
   }
 
   copy()
@@ -21,6 +64,7 @@ class ItemStack
     const item = this.getItem();
     const otherItem = itemStack.getItem();
     if (item !== otherItem) return false;
+    if (this._metadata !== itemStack._metadata) return false;
 
     const maxSize = Math.min(item.getMaxStackSize(), capacity);
     const stackSize = this._stackSize;
@@ -51,7 +95,7 @@ class ItemStack
       return false;
     }
   }
-  
+
   overflow(capacity)
   {
     const diffSize = this._stackSize - capacity;
@@ -68,11 +112,6 @@ class ItemStack
     return null;
   }
 
-  setItem(item)
-  {
-    this._item = item;
-  }
-
   getItem()
   {
     return this._item;
@@ -81,11 +120,6 @@ class ItemStack
   addStackSize(stackSize)
   {
     this._stackSize += stackSize;
-  }
-
-  setStackSize(stackSize)
-  {
-    this._stackSize = stackSize;
   }
 
   getStackSize()
@@ -98,14 +132,14 @@ class ItemStack
     return this._stackSize <= 0;
   }
 
-  setMetadata(metadata)
-  {
-    this._metadata = metadata;
-  }
-
   getMetadata()
   {
     return this._metadata;
+  }
+
+  getQuality()
+  {
+    return this._quality;
   }
 
   getID()

@@ -4,6 +4,7 @@ class Item
   {
     this._name = name;
     this._texture = "images/300.png";
+    this._color = 0x00000000;
 
     this._width = 1;
     this._height = 1;
@@ -16,6 +17,12 @@ class Item
   setTextureName(textureName)
   {
     this._texture = textureName;
+    return this;
+  }
+
+  setBaseColor(color)
+  {
+    this._color = color;
     return this;
   }
 
@@ -74,6 +81,11 @@ class Item
   getBaseValue()
   {
     return this._baseValue;
+  }
+
+  getBaseColor()
+  {
+    return this._color;
   }
 
   getTextureName()

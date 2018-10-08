@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ItemComponent from './ItemComponent.js';
+import ItemStackComponent from './ItemStackComponent.js';
 import InputController from './InputController.js';
 
 class CursorComponent extends React.Component
@@ -27,7 +27,7 @@ class CursorComponent extends React.Component
   //Override
   render()
   {
-    return <ItemComponent src={this.controller.cursor.getEquippedItemStack()} x={this.controller.posX} y={this.controller.posY}/>;
+    return <ItemStackComponent src={this.controller.cursor.getEquippedItemStack()} x={this.controller.posX} y={this.controller.posY}/>;
   }
 }
 

@@ -36,11 +36,19 @@ class ItemFillable extends Item
         itemStack.setStackSize(newStackSize);
       }
       craftingContainer.addItemStack(new ItemStack(this.containerItem), itemSlot.getRootIndex(), false);
+
+      //Reset metadata?
+      itemStack.setMetadata(0);
     }
     else
     {
       itemStack.setMetadata(metadata);
     }
+  }
+
+  getMaxFillAmount()
+  {
+    return this.maxFillAmount;
   }
 
   getContainerItem()

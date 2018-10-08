@@ -2,3 +2,24 @@
   margin: 5px;
   user-select: none;
 }
+
+.crafting-entrylist {
+  list-style: none;
+  padding: 0;
+  margin-left: 10px;
+}
+
+.crafting-entry {
+  display: flex;
+  flex-direction: row;
+
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.crafting-pattern {
+  font-size: 24px;
+}
+
+.crafting-itemmap {
+}

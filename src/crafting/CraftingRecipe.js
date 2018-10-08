@@ -4,7 +4,7 @@ class CraftingRecipe
 {
   constructor(pattern, itemMap, outputItem, outputAmount=1, outputMetadata=0)
   {
-    this.patterns = pattern.split('&');
+    this.pattern = pattern.replace(/\s/g, '');
     this.itemMap = itemMap;
 
     this.outputItem = outputItem;
@@ -31,145 +31,151 @@ class CraftingRecipe
     }
   }
 
-  matches(container)
+  matches(container, pattern=this.pattern, dst=[])
   {
     const containerWidth = container.getWidth();
     const containerHeight = container.getHeight();
-    const result = [];
-    const dst = [];
 
-    for(let pattern of this.patterns)
+    for(let j = 0; j < containerHeight; ++j)
     {
-      let flag = false;
-      for(let y = 0; y < containerHeight; ++y)
+      for(let i = 0; i < containerWidth; ++i)
       {
-        for(let x = 0; x < containerWidth; ++x)
+        const result = this.matchesPattern(container, pattern, this.itemMap, i, j, dst);
+        if (result && result.length > 0)
         {
-          if (matchesPattern(container, pattern, this.itemMap, x, y, 0, result, dst))
+          for(const slot of result)
           {
-            flag = true;
-            break;
+            dst.push(slot);
           }
+          return dst;
         }
-
-        if (flag) break;
-      }
-
-      if (flag)
-      {
-        while(dst.length > 0)
-        {
-          result.push(dst.pop());
-        }
-      }
-      else
-      {
-        return null;
       }
     }
 
-    return result;
+    return null;
+  }
+
+  matchesPattern(container, pattern, itemMap, offsetX, offsetY, used=[])
+  {
+    const containerWidth = container.getWidth();
+    const containerHeight = container.getHeight();
+
+    const dst = [];
+    const patternLength = pattern.length;
+    let symbolIndex = 0;
+    let symbol;
+    let x = offsetX;
+    let y = offsetY;
+    while(symbolIndex < patternLength)
+    {
+      symbol = pattern[symbolIndex++];
+
+      //console.log(x, y, symbol);
+
+      switch(symbol)
+      {
+        case ',':
+          //Go to the next line...
+          ++y;
+          x = offsetX - 1;
+          break;
+        case '&':
+          //Try another pattern...
+          const newPattern = pattern.substring(symbolIndex);
+          const newUsed = used.concat(dst);
+          for(let j = 0; j < containerHeight; ++j)
+          {
+            for(let i = 0; i < containerWidth; ++i)
+            {
+              const result = this.matchesPattern(container, newPattern, itemMap, i, j, newUsed);
+              if (result && result.length > 0)
+              {
+                //Found another pattern!
+                for(const slot of result)
+                {
+                  dst.push(slot);
+                }
+                return dst;
+              }
+            }
+          }
+          return null;
+          break;
+        case '*':
+          //Ignore whatever this is and continue...
+          break;
+        case '.':
+          //This is something already read...
+          if (!dst.includes(container.getSlot(x + y * containerWidth)))
+          {
+            return null;
+          }
+          break;
+        case '_':
+          if (container.getSlot(x + y * containerWidth))
+          {
+            return null;
+          }
+          break;
+        default:
+          const slot = container.getSlot(x + y * containerWidth);
+          if (slot)
+          {
+            const itemStack = slot.getItemStack();
+            const item = itemMap[symbol];
+            if (item === itemStack.getItem())
+            {
+              if (dst.includes(slot))
+              {
+                throw new Error("Invalid pattern spacing");
+              }
+
+              //Check if already used by OTHER crafting patterns
+              let stackSize = itemStack.getStackSize();
+              let index = used.indexOf(slot);
+              while (index >= 0)
+              {
+                --stackSize;
+                //Still enough of item left to take...
+                if (stackSize > 0)
+                {
+                  index = used.indexOf(slot, index + 1);
+                }
+                //Not enough of stack size
+                else
+                {
+                  return null;
+                }
+              }
+              dst.push(slot);
+            }
+            else
+            {
+              return null;
+            }
+          }
+          else
+          {
+            return null;
+          }
+      }
+
+      ++x;
+    }
+
+    //Out of symbols...
+    return dst;
   }
 
   getResult(usedSlots)
   {
     return new ItemStack(this.outputItem, this.outputAmount, this.outputMetadata);
   }
-}
 
-function matchesPattern(container, pattern, itemMap, offsetX=0, offsetY=0, patternOffset=0, used=[], dst=[])
-{
-  const containerWidth = container.getWidth();
-  const containerHeight = container.getHeight();
-  let nextSymbol = pattern.charAt(patternOffset);
-
-  let slot, index;
-  for(let y = offsetY; y < containerWidth; ++y)
+  static isPatternSymbol(symbol)
   {
-    for(let x = offsetX; x < containerWidth; ++x)
-    {
-      if (nextSymbol == ',')
-      {
-        //Skip to next row (but also update pattern index)
-        x = containerWidth;
-      }
-      else if (nextSymbol != '*')
-      {
-        index = x + y * containerWidth;
-        slot = container.getSlot(index);
-        if (typeof slot == 'object')
-        {
-          if (nextSymbol == '.')
-          {
-            if (!dst.includes(slot))
-            {
-              if (dst.length > 0) dst.length = 0;
-              return null;
-            }
-            else
-            {
-              //Success!
-            }
-          }
-          else if (slot.getItemStack().getItem() !== itemMap[nextSymbol])
-          {
-            if (dst.length > 0) dst.length = 0;
-            return null;
-          }
-          else if (used.includes(slot))
-          {
-            //TODO: not sure when this is relevant...
-            //TODO: IF it is not, then add canCraft() to item.
-
-            //Already used slot, must ensure enough amount
-            let stackSize = slot.getItemStack().getStackSize();
-            let slotIndex = 0;
-            while((slotIndex = used.indexOf(slot, slotIndex)) >= 0)
-            {
-              if (--stackSize <= 0)
-              {
-                return null;
-              }
-            }
-
-            //Success!
-          }
-          else if (dst.includes(slot))
-          {
-            //Invalid spacing in pattern - repeated symbol to self
-            throw new Error("Invalid spacing in pattern");
-          }
-          else
-          {
-            //Success!
-          }
-        }
-        else if (nextSymbol != '_')
-        {
-          if (dst.length > 0) dst.length = 0;
-          return null;
-        }
-        else
-        {
-          //Success!
-        }
-
-        dst.push(slot);
-      }
-      else
-      {
-        //Success!
-      }
-
-      //Did not fail, therefore get next symbol
-      ++patternOffset;
-      if (patternOffset >= pattern.length) return dst;
-
-      nextSymbol = pattern.charAt(patternOffset);
-    }
+    return symbol != '&' && symbol != '_' && symbol != '|' && symbol != '^' && symbol != ',' && symbol != '*' && symbol != '.';
   }
-
-  return dst;
 }
 
 export default CraftingRecipe;

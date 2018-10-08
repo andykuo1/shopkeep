@@ -68,9 +68,9 @@ export class CraftingOutputContainer extends SlotContainer
     for(let recipe of recipes)
     {
       const usedSlots = recipe.matches(container);
-      if (usedSlots)
+      if (usedSlots && usedSlots.length > 0)
       {
-        this.putItemStack(recipe.getResult(usedSlots), 0, true);
+        this.addItemStack(recipe.getResult(usedSlots), 0, true);
         return;
       }
     }

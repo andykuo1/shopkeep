@@ -1,0 +1,26 @@
+.crafting-recipe-container {
+  display: flex;
+  flex-direction: row;
+  margin: 5px;
+  padding: 2px;
+  border: 1px solid black;
+}
+
+.crafting-recipe-pattern > input {
+  font-size: 20px;
+  width: 150px;
+  padding: 5px;
+  border: none;
+}
+
+.crafting-recipe-itemmap, .crafting-recipe-output{
+  padding: 5px;
+  border: 1px dashed black;
+}
+
+.crafting-recipe-arrow {
+  margin-top: auto;
+  margin-bottom: auto;
+
+  padding: 5px;
+}

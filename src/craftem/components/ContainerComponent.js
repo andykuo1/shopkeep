@@ -1,7 +1,7 @@
 import React from 'react';
 import './ContainerComponent.css';
 
-import ItemComponent from './ItemComponent.js';
+import ItemStackComponent from './ItemStackComponent.js';
 
 class ContainerComponent extends React.Component
 {
@@ -84,7 +84,7 @@ class ContainerComponent extends React.Component
       //Only render if root index...
       if (i != index) return null;
 
-      return <ItemComponent key={e.getItemStack().getID()}
+      return <ItemStackComponent key={e.getItemStack().getID()}
         src={e.getItemStack()} embedded="true"
         x={(index % containerWidth) * slotWidth + offsetX}
         y={Math.floor(index / containerWidth) * slotHeight + offsetY}

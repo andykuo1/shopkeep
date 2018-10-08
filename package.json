@@ -4,7 +4,8 @@
   "description": "A crafting game",
   "scripts": {
     "start": "webpack-dev-server --mode development --config webpack.config.js",
-    "build": "webpack --mode production --config webpack.config.js"
+    "build": "webpack --mode production --config webpack.config.js",
+    "test": "webpack --config webpack.test.config.js && node ./dist/test.bundle.js"
   },
   "author": "Andrew Kuo",
   "license": "MIT",
