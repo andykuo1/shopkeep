@@ -1,4 +1,4 @@
-# Craftem
+# ShopKeep
 
 > The browser-based solution for a crafting game.
 
@@ -24,7 +24,7 @@ A more thorough guide will be here momentarily. Meanwhile, just try it! Have fun
 This is required to test the program. Just get the current version and install it.
 
 ### Installing [Git](https://git-scm.com/)
-This is required to edit the program remotely. Just get the current version and install it. The repository is hosted at [GitHub](https://github.com/andykuo1/craftem).
+This is required to edit the program remotely. Just get the current version and install it. The repository is hosted at [GitHub](https://github.com/andykuo1/shopkeep).
 
 ### Installing [Atom.io](https://atom.io/)
 This is not required, but recommended (by me). Just get the current version and install it.
@@ -46,16 +46,16 @@ Open a command line or terminal and enter a directory to where to copy the proje
 cd ~/
 ```
 
-Then, clone the [repo](https://github.com/andykuo1/craftem.git) to the directory.
+Then, clone the [repo](https://github.com/andykuo1/shopkeep.git) to the directory.
 
 ```
-git clone https://github.com/andykuo1/craftem.git
+git clone https://github.com/andykuo1/shopkeep.git
 ```
 
 Navigate into the directory of the repository.
 
 ```
-cd craftem
+cd shopkeep
 ```
 
 To ensure and verify the state of the repository enter the following command:
@@ -68,7 +68,7 @@ git status
 Open a command line or terminal and enter into the project directory. This should be where you've copied the remote repository. Following the previous example:
 
 ```
-cd ~/craftem
+cd ~/shopkeep
 ```
 
 If you want to inspect the contents of this directory, it should contain the project files, such as `package.json`.
