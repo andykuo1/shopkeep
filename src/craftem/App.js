@@ -41,7 +41,7 @@ class App extends React.Component
   render()
   {
     return <div className="app-container">
-      <h1>Craftem</h1>
+      <h1>ShopKeep</h1>
       <div style={{outline: "1px solid black", maxWidth: 600, maxHeight: 400, overflow: "scroll"}}>
         <ContainerComponent ref={ref=>this.containers.set(this.playerContainer, ref)} className="player-inventory" src={this.playerContainer}/>
         <ContainerComponent ref={ref=>this.containers.set(this.craftingContainer, ref)} className="player-crafting" src={this.craftingContainer}/>
