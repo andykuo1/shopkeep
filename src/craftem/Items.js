@@ -83,3 +83,18 @@ CraftingRegistry.registerRecipe(new CraftingRecipe("X.X.,Y**Y,.**.,X.X.", {X: OA
 
 CraftingRegistry.registerRecipe(new CraftingRecipe("X&Y", {X: OAK_PLANK, Y: SAW}, STICK, 4));
 CraftingRegistry.registerRecipe(new CraftingRecipe("X,Y,Z", {X: FLINT, Y: STICK, Z: FEATHER}, ARROW));
+
+CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: IRON_INGOT}, IRON_NUGGET, 4));
+CraftingRegistry.registerRecipe(new CraftingRecipe("XXXX", {X: IRON_NUGGET}, IRON_INGOT));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: GOLD_INGOT}, GOLD_NUGGET, 4));
+CraftingRegistry.registerRecipe(new CraftingRecipe("XXXX", {X: GOLD_NUGGET}, GOLD_INGOT));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: LEAD_INGOT}, LEAD_NUGGET, 4));
+CraftingRegistry.registerRecipe(new CraftingRecipe("XXXX", {X: LEAD_NUGGET}, LEAD_INGOT));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: COPPER_INGOT}, COPPER_NUGGET, 4));
+CraftingRegistry.registerRecipe(new CraftingRecipe("XXXX", {X: COPPER_NUGGET}, COPPER_INGOT));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: BRONZE_INGOT}, BRONZE_NUGGET, 4));
+CraftingRegistry.registerRecipe(new CraftingRecipe("XXXX", {X: BRONZE_NUGGET}, BRONZE_INGOT));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: SILVER_INGOT}, SILVER_NUGGET, 4));
+CraftingRegistry.registerRecipe(new CraftingRecipe("XXXX", {X: SILVER_NUGGET}, SILVER_INGOT));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: TIN_INGOT}, TIN_NUGGET, 4));
+CraftingRegistry.registerRecipe(new CraftingRecipe("XXXX", {X: TIN_NUGGET}, TIN_INGOT));
