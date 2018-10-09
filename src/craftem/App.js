@@ -26,7 +26,7 @@ class App extends React.Component
   {
     super(props);
 
-    this.playerContainer = new Container("Inventory", 7, 16);
+    this.playerContainer = new Container("Inventory", 10, 8);
     for(let item of ItemRegistry.getItems())
     {
       this.playerContainer.addItemStack(new ItemStack(item, item.getMaxStackSize()));

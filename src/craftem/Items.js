@@ -32,28 +32,30 @@ export const FEATHER = ItemRegistry.registerItem(new Item("feather")).setSize(1,
 export const STICK = ItemRegistry.registerItem(new Item("stick")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/stick.png");
 export const FLINT = ItemRegistry.registerItem(new Item("flint")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/flint.png");
 export const ARROW = ItemRegistry.registerItem(new Item("arrow")).setSize(1, 2).setMaxStackSize(64).setTextureName("images/arrow.png");
+export const LEATHER = ItemRegistry.registerItem(new Item("leather")).setSize(1, 2).setMaxStackSize(16).setTextureName("images/leather.png");
+export const LEATHER_STRIP = ItemRegistry.registerItem(new Item("leatherStrip")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/leatherStrip.png");
 
-export const IRON_INGOT = ItemRegistry.registerItem(new Item("ironIngot")).setSize(2, 1).setMaxStackSize(16).setTextureName("images/ironIngot.png");
-export const COPPER_INGOT = ItemRegistry.registerItem(new Item("copperIngot")).setSize(2, 1).setMaxStackSize(16).setTextureName("images/copperIngot.png");
 export const GOLD_INGOT = ItemRegistry.registerItem(new Item("goldIngot")).setSize(2, 1).setMaxStackSize(16).setTextureName("images/goldIngot.png");
+export const SILVER_INGOT = ItemRegistry.registerItem(new Item("silverIngot")).setSize(2, 1).setMaxStackSize(16).setTextureName("images/silverIngot.png");
+export const COPPER_INGOT = ItemRegistry.registerItem(new Item("copperIngot")).setSize(2, 1).setMaxStackSize(16).setTextureName("images/copperIngot.png");
+export const IRON_INGOT = ItemRegistry.registerItem(new Item("ironIngot")).setSize(2, 1).setMaxStackSize(16).setTextureName("images/ironIngot.png");
+export const LEAD_INGOT = ItemRegistry.registerItem(new Item("leadIngot")).setSize(2, 1).setMaxStackSize(16).setTextureName("images/leadIngot.png");
 export const TIN_INGOT = ItemRegistry.registerItem(new Item("tinIngot")).setSize(2, 1).setMaxStackSize(16).setTextureName("images/tinIngot.png");
 export const BRONZE_INGOT = ItemRegistry.registerItem(new Item("bronzeIngot")).setSize(2, 1).setMaxStackSize(16).setTextureName("images/bronzeIngot.png");
-export const SILVER_INGOT = ItemRegistry.registerItem(new Item("silverIngot")).setSize(2, 1).setMaxStackSize(16).setTextureName("images/silverIngot.png");
-export const LEAD_INGOT = ItemRegistry.registerItem(new Item("leadIngot")).setSize(2, 1).setMaxStackSize(16).setTextureName("images/leadIngot.png");
 
-export const IRON_NUGGET = ItemRegistry.registerItem(new Item("ironNugget")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/ironNugget.png");
-export const COPPER_NUGGET = ItemRegistry.registerItem(new Item("copperNugget")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/copperNugget.png");
 export const GOLD_NUGGET = ItemRegistry.registerItem(new Item("goldNugget")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/goldNugget.png");
+export const SILVER_NUGGET = ItemRegistry.registerItem(new Item("silverNugget")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/silverNugget.png");
+export const COPPER_NUGGET = ItemRegistry.registerItem(new Item("copperNugget")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/copperNugget.png");
+export const IRON_NUGGET = ItemRegistry.registerItem(new Item("ironNugget")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/ironNugget.png");
+export const LEAD_NUGGET = ItemRegistry.registerItem(new Item("leadNugget")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/leadNugget.png");
 export const TIN_NUGGET = ItemRegistry.registerItem(new Item("tinNugget")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/tinNugget.png");
 export const BRONZE_NUGGET = ItemRegistry.registerItem(new Item("bronzeNugget")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/bronzeNugget.png");
-export const SILVER_NUGGET = ItemRegistry.registerItem(new Item("silverNugget")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/silverNugget.png");
-export const LEAD_NUGGET = ItemRegistry.registerItem(new Item("leadNugget")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/leadNugget.png");
 
 export const GOLD_ORE = ItemRegistry.registerItem(new Item("goldOre")).setSize(2, 2).setMaxStackSize(4).setTextureName("images/goldOre.png");
-export const IRON_ORE = ItemRegistry.registerItem(new Item("ironOre")).setSize(2, 2).setMaxStackSize(4).setTextureName("images/ironOre.png");
-export const COPPER_ORE = ItemRegistry.registerItem(new Item("copperOre")).setSize(2, 2).setMaxStackSize(4).setTextureName("images/copperOre.png");
-export const LEAD_ORE = ItemRegistry.registerItem(new Item("leadOre")).setSize(2, 2).setMaxStackSize(4).setTextureName("images/leadOre.png");
 export const SILVER_ORE = ItemRegistry.registerItem(new Item("silverOre")).setSize(2, 2).setMaxStackSize(4).setTextureName("images/silverOre.png");
+export const COPPER_ORE = ItemRegistry.registerItem(new Item("copperOre")).setSize(2, 2).setMaxStackSize(4).setTextureName("images/copperOre.png");
+export const IRON_ORE = ItemRegistry.registerItem(new Item("ironOre")).setSize(2, 2).setMaxStackSize(4).setTextureName("images/ironOre.png");
+export const LEAD_ORE = ItemRegistry.registerItem(new Item("leadOre")).setSize(2, 2).setMaxStackSize(4).setTextureName("images/leadOre.png");
 export const TIN_ORE = ItemRegistry.registerItem(new Item("tinOre")).setSize(2, 2).setMaxStackSize(4).setTextureName("images/tinOre.png");
 
 //Brass
@@ -83,6 +85,7 @@ CraftingRegistry.registerRecipe(new CraftingRecipe("X.X.,Y**Y,.**.,X.X.", {X: OA
 
 CraftingRegistry.registerRecipe(new CraftingRecipe("X&Y", {X: OAK_PLANK, Y: SAW}, STICK, 4));
 CraftingRegistry.registerRecipe(new CraftingRecipe("X,Y,Z", {X: FLINT, Y: STICK, Z: FEATHER}, ARROW));
+CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: LEATHER}, LEATHER_STRIP, 4));
 
 CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: IRON_INGOT}, IRON_NUGGET, 4));
 CraftingRegistry.registerRecipe(new CraftingRecipe("XXXX", {X: IRON_NUGGET}, IRON_INGOT));
