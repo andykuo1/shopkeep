@@ -46,6 +46,12 @@ export class CraftingOutputContainer extends SlotContainer
   }
 
   //Override
+  onCursorPlace(cursor, slotIndex, itemStack)
+  {
+    //Do nothing.
+  }
+
+  //Override
   onCursorExtract(cursor, slotIndex)
   {
     const recipes = CraftingRegistry.getRecipes();
