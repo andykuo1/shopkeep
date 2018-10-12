@@ -26,6 +26,8 @@ export const CLOTH_RAG = ItemRegistry.registerItem(new Item("clothRag")).setSize
 export const CLOTH = ItemRegistry.registerItem(new Item("cloth")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/cloth.png");
 export const OILED_CLOTH_RAG = ItemRegistry.registerItem(new Item("oiledClothRag")).setSize(1, 2).setMaxStackSize(24).setTextureName("images/oiledClothRag.png");
 
+export const IRON_BOOTS = ItemRegistry.registerItem(new Item("ironBoots")).setSize(2, 2).setMaxStackSize(1).setTextureName("images/300.png");
+
 export const SAW = ItemRegistry.registerItem(new ItemTool("saw")).setSize(1, 2).setTextureName("images/saw.png");
 
 export const FEATHER = ItemRegistry.registerItem(new Item("feather")).setSize(1, 1).setMaxStackSize(64).setTextureName("images/feather.png");
@@ -82,6 +84,8 @@ CraftingRegistry.registerRecipe(new CraftingRecipe("X", {X: CLOTH_RAG}, CLOTH, 4
 CraftingRegistry.registerRecipe(new CraftingRecipe("X&Y", {X: CLOTH_RAG, Y: OIL_FLASK}, OILED_CLOTH_RAG));
 
 CraftingRegistry.registerRecipe(new CraftingRecipe("X.X.,Y**Y,.**.,X.X.", {X: OAK_PLANK, Y: OAK_WOOD}, EMPTY_FLASK));
+
+CraftingRegistry.registerRecipe(new CraftingRecipe("X*,.Y,Z.&X*,.Y,Z.", {X: LEATHER, Y: TOUGH_FIBER, Z: IRON_INGOT}, IRON_BOOTS));
 
 CraftingRegistry.registerRecipe(new CraftingRecipe("X&Y", {X: OAK_PLANK, Y: SAW}, STICK, 4));
 CraftingRegistry.registerRecipe(new CraftingRecipe("X,Y,Z", {X: FLINT, Y: STICK, Z: FEATHER}, ARROW));
