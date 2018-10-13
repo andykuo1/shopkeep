@@ -1,5 +1,5 @@
 import Container from './Container.js';
-import { ContainerSlot } from './Container.js';
+import ContainerSlot from './ContainerSlot.js';
 
 class SlotContainer extends Container
 {

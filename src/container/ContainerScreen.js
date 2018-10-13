@@ -38,6 +38,10 @@ class ContainerScreen
     {
       this.targetSlots[0].container.interact(this.cursor, this.targetSlots[0].index);
     }
+    else
+    {
+      //TODO: Split the items among the available space...
+    }
 
     this.targetSlots.length = 0;
   }

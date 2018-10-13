@@ -53,6 +53,50 @@ class ItemStack
     return this;
   }
 
+  join(itemStack, capacity=Infinity, allowPartial=true)
+  {
+    const item = this.getItem();
+    const otherItem = itemStack.getItem();
+
+    if (item !== otherItem) return false;
+    if (!item.canStackWith(this, itemStack)) return false;
+
+    const maxSize = Math.min(item.getMaxStackSize(), capacity);
+    const stackSize = this._stackSize;
+    if (stackSize < maxSize)
+    {
+      const otherSize = itemStack._stackSize;
+      const newStackSize = stackSize + otherSize;
+      const remaining = newStackSize - maxSize;
+
+      //If can fit the entire stack...
+      if (remaining <= 0)
+      {
+        this.setStackSize(newStackSize);
+        itemStack.setStackSize(0);
+        return true;
+      }
+      //Fit some of it at least...
+      else if (allowPartial)
+      {
+        this.setStackSize(maxSize);
+        itemStack.setStackSize(remaining);
+        return true;
+      }
+      //Could not fit partial...
+      else
+      {
+        return false;
+      }
+    }
+    else
+    {
+      //No more room to join...
+      return false;
+    }
+  }
+
+
   copy()
   {
     const result = new ItemStack(this._item, this._stackSize, this._metadata);

@@ -50,6 +50,11 @@ class Item
     return this;
   }
 
+  canStackWith(itemStack, otherItemStack)
+  {
+    return true;
+  }
+
   onCraftResult(itemStack, itemSlot, craftingContainer, recipe, resultItem)
   {
     const newStackSize = itemStack.getStackSize() - 1;

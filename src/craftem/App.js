@@ -25,25 +25,63 @@ class App extends React.Component
 
     this.cursor = new ContainerCursor();
     this.screens = [
-      new ContainerScreen("Inventory", this.cursor),//Inventory
-      new ContainerScreen("Crafting", this.cursor),//Crafting
+      new ContainerScreen("Crafting", this.cursor),
+      new ContainerScreen("Smelting", this.cursor),
+      new ContainerScreen("Cauldron", this.cursor),
+      new ContainerScreen("Textile", this.cursor),
+      new ContainerScreen("Alchemy", this.cursor),
+      new ContainerScreen("Enchanting", this.cursor)
     ];
     this.screenIndex = 0;
 
-    const inventory = new Container(7, 7);
-    inventory.addItemStack(new ItemStack(Items.TOUGH_FIBER));
-    inventory.addItemStack(new ItemStack(Items.OAK_LOG, 8));
-    this.screens[0].addContainer(inventory, 10, 10);
+    const playerInventory = new Container(7, 9);
+    playerInventory.addItemStack(new ItemStack(Items.TOUGH_FIBER));
+    playerInventory.addItemStack(new ItemStack(Items.OAK_LOG, 8));
 
-    const crafting = new CraftingContainer(5, 5);
-    this.screens[0].addContainer(crafting, 244, 10);
-    this.screens[0].addContainer(crafting.getOutputContainer(), 414, 10);
+    //Crafting
+    {
+      const screen = this.screens[0];
+      screen.addContainer(playerInventory, 10, 10);
 
-    const trashCan = new DumpContainer();
-    this.screens[0].addContainer(trashCan, 244, 180)
+      const crafting = new CraftingContainer(5, 5);
+      screen.addContainer(crafting, 244, 10);
+      screen.addContainer(crafting.getOutputContainer(), 414, 10);
+      const trashCan = new DumpContainer();
+      screen.addContainer(trashCan, 244, 180);
+    }
+
+    //Smelting
+    {
+      const screen = this.screens[1];
+      screen.addContainer(playerInventory, 10, 10);
+    }
+
+    //Cauldron
+    {
+      const screen = this.screens[2];
+      screen.addContainer(playerInventory, 10, 10);
+    }
+
+    //Textile
+    {
+      const screen = this.screens[3];
+      screen.addContainer(playerInventory, 10, 10);
+    }
+
+    //Alchemy
+    {
+      const screen = this.screens[4];
+      screen.addContainer(playerInventory, 10, 10);
+    }
+
+    //Enchanting
+    {
+      const screen = this.screens[5];
+      screen.addContainer(playerInventory, 10, 10);
+    }
 
     this.toolbarItemElement = null;
-
+    
     this.onClick = this.onClick.bind(this);
     this.onToolbarItemAdd = this.onToolbarItemAdd.bind(this);
   }
@@ -84,7 +122,7 @@ class App extends React.Component
     const value = this.toolbarItemElement.getValue();
     if (value)
     {
-      this.screens[0].getContainerByIndex(0).addItemStack(new ItemStack(value, value.getMaxStackSize()));
+      this.getActiveContainerScreen().getContainerByIndex(0).addItemStack(new ItemStack(value, value.getMaxStackSize()));
     }
   }
 
