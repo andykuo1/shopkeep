@@ -36,8 +36,8 @@ class App extends React.Component
     this.cursor.setScreen(this.getActiveContainerScreen());
 
     const playerInventory = new Container(7, 9);
-    playerInventory.addItemStack(new ItemStack(Items.TOUGH_FIBER));
-    playerInventory.addItemStack(new ItemStack(Items.OAK_LOG, 8));
+    playerInventory.addItemStack(new ItemStack(Items.OAK_LOG, 4));
+    playerInventory.addItemStack(new ItemStack(Items.TOUGH_FIBER, 64));
 
     //Crafting
     {

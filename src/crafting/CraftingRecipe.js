@@ -22,6 +22,11 @@ class CraftingRecipe
       {
         const itemStack = slot.getItemStack();
         itemStack.getItem().onCraftResult(itemStack, slot, container, this, result);
+
+        if (slot.isEmpty())
+        {
+          container.removeSlot(slot.getRootIndex());
+        }
       }
       return result;
     }

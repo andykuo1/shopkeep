@@ -2,7 +2,7 @@ import { guid } from 'util/MathHelper.js';
 
 class ItemStack
 {
-  constructor(item=null, amount=0)
+  constructor(item=null, amount=(item == null ? 0 : 1))
   {
     this._id = guid();
 
@@ -72,7 +72,7 @@ class ItemStack
       this._metadata.pop();
     }
 
-    if (this.isEmpty()) this.clear();
+    if (this._metadata.length <= 0) this.clear();
     return result;
   }
 
