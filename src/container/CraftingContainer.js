@@ -5,17 +5,17 @@ import CraftingRegistry from 'crafting/CraftingRegistry.js';
 
 class CraftingContainer extends Container
 {
-  constructor(name, craftingSize)
+  constructor(width, height)
   {
-    super(name, craftingSize, craftingSize);
+    super(width, height);
 
     this.outputContainer = new CraftingOutputContainer(this);
   }
 
   //Override
-  onCursorInteract(cursor, slotIndex)
+  interact(cursor, slotIndex)
   {
-    super.onCursorInteract(cursor, slotIndex);
+    super.interact(cursor, slotIndex);
 
     this.outputContainer.onCraftingUpdate(this);
   }
@@ -32,27 +32,50 @@ export class CraftingOutputContainer extends SlotContainer
 {
   constructor(inputContainer)
   {
-    super(inputContainer.getName() + ".output");
+    super();
 
     this.inputContainer = inputContainer;
   }
 
   //Override
-  onCursorInteract(cursor, slotIndex)
+  interact(cursor, slotIndex=0)
   {
-    const result = super.onCursorInteract(cursor, slotIndex);
+    const itemStack = cursor.getEquippedItemStack();
+    const slot = this._slots[0];
+
+    //If holding something...
+    if (itemStack)
+    {
+      //Picking up by merging...
+      if (typeof slot == 'object')
+      {
+        const result = itemStack.merge(slot.getItemStack(), Infinity, false);
+        if (result && result.isEmpty())
+        {
+          this.removeSlot(0);
+
+          this.onCraft(cursor, 0);
+        }
+      }
+    }
+    //If holding nothing...
+    else
+    {
+      //Pick it up...
+      if (typeof slot == 'object')
+      {
+        const result = slot.getItemStack();
+        cursor.setEquippedItemStack(result);
+        this.removeSlot(0);
+
+        this.onCraft(cursor, 0);
+      }
+    }
     this.onCraftingUpdate(this.inputContainer);
-    return result;
   }
 
   //Override
-  onCursorPlace(cursor, slotIndex, itemStack)
-  {
-    //Do nothing.
-  }
-
-  //Override
-  onCursorExtract(cursor, slotIndex)
+  onCraft(cursor, slotIndex)
   {
     const recipes = CraftingRegistry.getRecipes();
     for(let recipe of recipes)

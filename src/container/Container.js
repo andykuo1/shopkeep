@@ -1,25 +1,17 @@
+import {guid} from 'util/MathHelper.js';
+
 class Container
 {
-  constructor(name, width, height)
+  constructor(width, height)
   {
-    this._name = name;
     this._width = width;
     this._height = height;
+    this._id = guid();
 
     this._slots = new Array(this._width * this._height);
     this._slotsOnly = new Set();
 
-    this._canPlace = true;
-    this._canExtract = true;
-
     this._capacity = Infinity;
-  }
-
-  setEditable(canPlace, canExtract=canPlace)
-  {
-    this._canPlace = canPlace;
-    this._canExtract = canExtract;
-    return this;
   }
 
   setCapacity(capacity)
@@ -37,98 +29,47 @@ class Container
     }
   }
 
-  onCursorInteract(cursor, slotIndex)
+  interact(cursor, slotIndex)
   {
     const itemStack = cursor.getEquippedItemStack();
-
-    //Is holding something...
-    if (itemStack)
-    {
-      if (!this._canPlace) return false;
-
-      return this.onCursorPlace(cursor, slotIndex, itemStack);
-    }
-    //Is holding nothing...
-    else
-    {
-      if (!this._canExtract) return false;
-      const slot = this._slots[slotIndex];
-
-      if (typeof slot == 'object')
-      {
-        return this.onCursorExtract(cursor, slotIndex);
-      }
-    }
-
-    return false;
-  }
-
-  onCursorPlace(cursor, slotIndex, itemStack)
-  {
     const slot = this._slots[slotIndex];
 
-    //Interacting with some slot...
-    if (typeof slot == 'object')
+    //If holding something...
+    if (itemStack)
     {
-      //Try merging/replacing?
-      const prevStackSize = itemStack.getStackSize();
+      //Try putting down...
       const result = this.addItemStack(itemStack, slotIndex, true, true, false);
-      if (result)
-      {
-        cursor.setEquippedItemStack(result);
-      }
-      else
-      {
-        cursor.removeEquippedItemStack();
-      }
-
-      return result != itemStack || prevStackSize != result.getStackSize();
+      cursor.setEquippedItemStack(result);
     }
+    //If holding nothing...
     else
     {
-      //Put it down.
-      const prevStackSize = itemStack.getStackSize();
-      const result = this.addItemStack(itemStack, slotIndex, false, true, true);
-      if (result)
+      //Pick it up...
+      if (typeof slot == 'object')
       {
-        cursor.setEquippedItemStack(result);
-      }
-      else
-      {
-        cursor.removeEquippedItemStack();
-      }
-
-      return result != itemStack || prevStackSize != result.getStackSize();
-    }
-  }
-
-  onCursorExtract(cursor, slotIndex)
-  {
-    //Pick it up.
-    let result = this.getItemStack(slotIndex);
-
-    if (cursor.isPrecisionMode())
-    {
-      const newStackSize = result.getStackSize() - 1;
-      if (newStackSize <= 0)
-      {
-        this.removeSlot(slotIndex);
-      }
-      else
-      {
-        result.setStackSize(newStackSize);
-
-        result = result.copy();
-        result.setStackSize(1);
+        const result = slot.getItemStack();
+        if (cursor.isPrecisionMode())
+        {
+          const newAmount = Math.ceil(result.getStackSize() / 2);
+          const newStackSize = result.getStackSize() - newAmount;
+          if (newStackSize > 0)
+          {
+            cursor.setEquippedItemStack(result.split(newAmount));
+            return;
+          }
+          else
+          {
+            cursor.setEquippedItemStack(result);
+            this.removeSlot(slotIndex);
+          }
+        }
+        else
+        {
+          cursor.setEquippedItemStack(result);
+          this.removeSlot(slotIndex);
+        }
       }
     }
-    else
-    {
-      this.removeSlot(slotIndex);
-    }
-
-    cursor.setEquippedItemStack(result);
-    return true;
   }
 
   addItemStack(itemStack, slotIndex=-1, replace=false, merge=false, autofill=true)
@@ -273,7 +214,7 @@ class Container
     {
       //Don't check borders
       if ((i % containerWidth) + itemWidth > containerWidth) continue;
-      if ((i / containerHeight) + itemHeight > containerHeight) continue;
+      if (Math.floor(i / containerHeight) + itemHeight > containerHeight) continue;
 
       slot = this._slots[i];
 
@@ -414,9 +355,9 @@ class Container
     return this._height;
   }
 
-  getName()
+  getID()
   {
-    return this._name;
+    return this._id;
   }
 }
 

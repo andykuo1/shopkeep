@@ -1,0 +1,13 @@
+.itemcontainer-container {
+
+}
+
+.itemcontainer-slot {
+  fill: lightgray;
+  opacity: 1;
+  outline: 1px solid black;
+}
+
+.itemcontainer-slot.active {
+  opacity: 0.5;
+}

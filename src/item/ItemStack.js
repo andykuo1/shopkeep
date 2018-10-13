@@ -59,7 +59,7 @@ class ItemStack
     return result;
   }
 
-  merge(itemStack, capacity=Infinity)
+  merge(itemStack, capacity=Infinity, allowPartial=true)
   {
     const item = this.getItem();
     const otherItem = itemStack.getItem();
@@ -82,11 +82,16 @@ class ItemStack
         return true;
       }
       //Fit some of it at least...
-      else
+      else if (allowPartial)
       {
         this.setStackSize(maxSize);
         itemStack.setStackSize(remaining);
         return true;
+      }
+      //Could not fit partial...
+      else
+      {
+        return false;
       }
     }
     else
@@ -110,6 +115,24 @@ class ItemStack
     }
 
     return null;
+  }
+
+  split(amount)
+  {
+    const newStackSize = this._stackSize - amount;
+    if (newStackSize > 0)
+    {
+      const result = this.copy();
+      result._stackSize = amount;
+      this._stackSize = newStackSize;
+      return result;
+    }
+    else
+    {
+      const result = this.copy();
+      this._stackSize = 0;
+      return result;
+    }
   }
 
   getItem()

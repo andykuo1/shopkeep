@@ -1,57 +1,90 @@
 import React from 'react';
+import './ItemSelector.css';
+
+import ItemRenderer from './ItemRenderer.js';
 
 import ItemRegistry from 'item/ItemRegistry.js';
 
-import ItemComponent from './ItemComponent.js';
-
 class ItemSelector extends React.Component
 {
-  constructor()
+  constructor(props)
   {
-    super();
+    super(props);
 
-    this.items = [];
+    this.itemList = [];
 
     this.state = {
-      value: ItemRegistry.getItems().next().value.getName()
+      open: false,
+      value: null
     };
-
-    this.onValueChange = this.onValueChange.bind(this);
-  }
-
-  getItem()
-  {
-    return ItemRegistry.getItem(this.state.value);
   }
 
   //Override
   componentWillMount()
   {
-    const result = this.items;
-    for(const item of ItemRegistry.getItems())
-    {
-      result.push(item);
-    }
+    this.itemList = Array.from(ItemRegistry.getItems());
   }
 
-  onValueChange(e)
+  //Override
+  componentWillUnmount()
   {
-    this.setState({value: e.target.value});
+    this.itemList = null;
+  }
+
+  toggle()
+  {
+    this.setState(prev => {
+      return {
+        open: !prev.open
+      };
+    });
+  }
+
+  close()
+  {
+    this.setState({open: false});
+  }
+
+  getValue()
+  {
+    return this.state.value;
   }
 
   //Override
   render()
   {
-    return <select value={this.state.value} onChange={this.onValueChange}>
-    {
-      this.items.map((e, i) => {
-        const name = e.getName();
-        return <option key={name} value={name}>
-        {name}
-        </option>;
-      })
-    }
-    </select>;
+    const title = this.props.title || "Items";
+    const items = this.itemList;
+    const isOpen = this.state.open;
+    const value = this.state.value;
+    return <div className="itemselector-container">
+      <div className="itemselector-header" onClick={() => this.toggle()}>
+        <span className="itemselector-header-title">
+        {value ? value.getName() : title}
+        </span>
+        <span className="itemselector-header-icon">
+        {
+          value &&
+          <ItemRenderer target={value} slotWidth={24 / value.getWidth()} slotHeight={24 / value.getHeight()}/>
+        }
+        </span>
+      </div>
+      {
+        isOpen &&
+        <ul className="itemselector-list">
+        {
+          items.map(e=><li key={e.getName()} className="itemselector-list-item"
+            onClick={() => {
+              this.setState({value: e})
+              this.close();
+            }}>
+            <ItemRenderer target={e} slotWidth={16 / e.getWidth()} slotHeight={16 / e.getHeight()}/>
+            {e.getName()}
+          </li>)
+        }
+        </ul>
+      }
+    </div>;
   }
 }
 

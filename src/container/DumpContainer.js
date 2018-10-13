@@ -2,9 +2,9 @@ import SlotContainer from './SlotContainer.js';
 
 class DumpContainer extends SlotContainer
 {
-  constructor(name, maxItemWidth=Infinity, maxItemHeight=Infinity)
+  constructor(maxItemWidth=Infinity, maxItemHeight=Infinity)
   {
-    super(name, maxItemWidth, maxItemHeight);
+    super(maxItemWidth, maxItemHeight);
   }
 
   tryDumpItemStack(itemStack)

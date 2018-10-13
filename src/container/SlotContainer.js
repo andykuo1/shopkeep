@@ -3,9 +3,9 @@ import { ContainerSlot } from './Container.js';
 
 class SlotContainer extends Container
 {
-  constructor(name, maxItemWidth=Infinity, maxItemHeight=Infinity)
+  constructor(maxItemWidth=Infinity, maxItemHeight=Infinity)
   {
-    super(name, 1, 1);
+    super(1, 1);
 
     this._slot = new SlotContainerSlot(this);
 
@@ -14,10 +14,10 @@ class SlotContainer extends Container
   }
 
   //Override
-  onCursorInteract(cursor, slotIndex=0)
+  interact(cursor, slotIndex=0)
   {
     //Ignores slotIndex...
-    return super.onCursorInteract(cursor, 0);
+    return super.interact(cursor, 0);
   }
 
   //Overrride

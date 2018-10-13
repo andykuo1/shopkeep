@@ -1,25 +1,80 @@
-.itemcontainer {
-  margin: 5px;
+.app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+
   user-select: none;
+
+  background: dodgerblue;
 }
 
-.crafting-entrylist {
-  list-style: none;
-  padding: 0;
-  margin-left: 10px;
-}
+.toolbar-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 64px;
 
-.crafting-entry {
+  background: yellowgreen;
+  border-bottom: 4px solid gold;
+}
+.toolbar-title {
+  font-size: 20px;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 10px;
+}
+.toolbar-items {
+  width: 160px;
+  padding: 10px;
+}
+.toolbar-items-buttons {
   display: flex;
   flex-direction: row;
 
-  margin-top: 10px;
-  margin-bottom: 10px;
+  padding: 5px;
+}
+.toolbar-items-buttons > * {
+  width: 100%;
 }
 
-.crafting-pattern {
+.workspace-container {
+  display: flex;
+  flex-direction: row;
+
+  flex: 1;
+
+  background: darkslateblue;
+}
+.workspace-content {
+  flex: 1;
+}
+.workspace-navbutton {
+  background: none;
+  border: none;
+  outline: none;
+  margin-top: auto;
+  margin-bottom: auto;
+
+  cursor: pointer;
+
+  color: white;
+  height: 60px;
   font-size: 24px;
+
+  transition: background 0.3s ease;
+}
+.workspace-navbutton:hover {
+  background: slategray;
+}
+.workspace-navbutton:disabled {
+  cursor: auto;
+
+  color: dimgray;
+  background: none!important;
 }
 
-.crafting-itemmap {
+.footer-container {
+  position: absolute;
+  top: 100vh;
 }

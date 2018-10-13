@@ -1,28 +1,33 @@
 import React from 'react';
-import './ItemComponent.css';
+import './ItemRenderer.css';
+
+import {PADDING,
+  TEXTURE_DIR,
+  DEFAULT_SLOT_WIDTH,
+  DEFAULT_SLOT_HEIGHT} from './ItemRenderer.js';
 
 import ItemStack from 'item/ItemStack.js';
 
-class ItemStackComponent extends React.Component
+class ItemStackRenderer extends React.Component
 {
-  constructor()
+  constructor(props)
   {
-    super();
+    super(props);
   }
 
   //Override
   render()
   {
-    const itemStack = this.props.src;
+    const itemStack = this.props.target;
     if (!(itemStack instanceof ItemStack)) return null;
 
     const isEmbedded = this.props.embedded;
 
-    const offsetX = this.props.x || 0;
-    const offsetY = this.props.y || 0;
+    const offsetX = this.props.x;
+    const offsetY = this.props.y;
 
-    const slotWidth = this.props.slotWidth || 32;
-    const slotHeight = this.props.slotHeight || 32;
+    const slotWidth = this.props.slotWidth || DEFAULT_SLOT_WIDTH;
+    const slotHeight = this.props.slotHeight || DEFAULT_SLOT_HEIGHT;
 
     if (!isEmbedded)
     {
@@ -43,31 +48,33 @@ class ItemStackComponent extends React.Component
     }
   }
 
-  renderItemStack(itemStack, offsetX=0, offsetY=0, slotWidth=32, slotHeight=32)
+  renderItemStack(itemStack, offsetX=0, offsetY=0, slotWidth=DEFAULT_SLOT_WIDTH, slotHeight=DEFAULT_SLOT_HEIGHT)
   {
     const item = itemStack.getItem();
     const left = offsetX + PADDING;
     const top = offsetY + PADDING;
     const width = slotWidth * item.getWidth() - (PADDING * 2);
     const height = slotHeight * item.getHeight() - (PADDING * 2);
+    const stackSize = itemStack.getStackSize();
     /*
     <rect className="itemstack-item"
       x={left} y={top}
       width={width} height={height}
       style={{fill: "slategray"}}/>
     */
-    return <g key={itemStack.getID()} className="itemstack-container">
-      <image className="itemstack-content"
-        x={left} y={top}
-        width={width} height={height}
-        xlinkHref={"./res/" + item.getTextureName()}/>
-      <text className="itemstack-size"
-        x={left + width - PADDING} y={top + height - PADDING}>
-        {itemStack.getStackSize()}
-      </text>
+    return <g key={item.getName()} className="itemstack-container">
+      <image className="itemstack"
+        x={left} y={top} width={width} height={height}
+        xlinkHref={TEXTURE_DIR + item.getTextureName()}/>
+      {
+        stackSize > 1 &&
+        <text className="itemstack-size"
+          x={left + width - PADDING} y={top + height - PADDING}>
+          {stackSize}
+        </text>
+      }
     </g>;
   }
 }
 
-export default ItemStackComponent;
-export const PADDING = 2;
+export default ItemStackRenderer;

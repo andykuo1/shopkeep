@@ -1,8 +1,7 @@
 import React from 'react';
-import './CraftingRecipeComponent.css';
+import './CraftingRecipeRenderer.css';
 
 import ItemSelector from './ItemSelector.js';
-import ItemComponent from './ItemComponent.js';
 
 import CraftingRegistry from 'crafting/CraftingRegistry.js';
 import CraftingRecipe from 'crafting/CraftingRecipe.js';
@@ -41,13 +40,13 @@ class EditableCraftingRecipeComponent extends React.Component
   onSubmit(e)
   {
     if (!this.state.value) return;
-    
+
     const itemMap = {};
     for(const symbol of this.state.symbols)
     {
-      itemMap[symbol] = this.inputs.get(symbol).getItem();
+      itemMap[symbol] = this.inputs.get(symbol).getValue();
     }
-    const output = this.output.getItem();
+    const output = this.output.getValue();
 
     CraftingRegistry.registerRecipe(new CraftingRecipe(this.state.value, itemMap, output, 1));
 

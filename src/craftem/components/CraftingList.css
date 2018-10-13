@@ -1,0 +1,14 @@
+.crafting-list-container {
+  background: white;
+}
+
+.crafting-list-container > h1 {
+  margin: 0;
+  padding: 15px;
+}
+
+.crafting-list {
+  padding: 10px;
+  margin: 0;
+  list-style: none;
+}

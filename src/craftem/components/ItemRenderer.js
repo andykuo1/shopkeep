@@ -1,19 +1,24 @@
 import React from 'react';
-import './ItemComponent.css';
+import './ItemRenderer.css';
 
 import Item from 'item/Item.js';
 
-class ItemComponent extends React.Component
+export const PADDING = 2;
+export const TEXTURE_DIR = "./res/images/";
+export const DEFAULT_SLOT_WIDTH = 32;
+export const DEFAULT_SLOT_HEIGHT = 32;
+
+class ItemRenderer extends React.Component
 {
-  constructor()
+  constructor(props)
   {
-    super();
+    super(props);
   }
 
   //Override
   render()
   {
-    const item = this.props.src;
+    const item = this.props.target;
     if (!(item instanceof Item)) return null;
 
     const isEmbedded = this.props.embedded;
@@ -21,8 +26,8 @@ class ItemComponent extends React.Component
     const offsetX = this.props.x;
     const offsetY = this.props.y;
 
-    const slotWidth = this.props.slotWidth || 32;
-    const slotHeight = this.props.slotHeight || 32;
+    const slotWidth = this.props.slotWidth || DEFAULT_SLOT_WIDTH;
+    const slotHeight = this.props.slotHeight || DEFAULT_SLOT_HEIGHT;
 
     if (!isEmbedded)
     {
@@ -42,7 +47,7 @@ class ItemComponent extends React.Component
     }
   }
 
-  renderItem(item, offsetX=0, offsetY=0, slotWidth=32, slotHeight=32)
+  renderItem(item, offsetX=0, offsetY=0, slotWidth=DEFAULT_SLOT_WIDTH, slotHeight=DEFAULT_SLOT_HEIGHT)
   {
     const left = offsetX + PADDING;
     const top = offsetY + PADDING;
@@ -55,13 +60,11 @@ class ItemComponent extends React.Component
       style={{fill: "slategray"}}/>
     */
     return <g key={item.getName()} className="itemstack-container">
-      <image className="itemstack-content"
-        x={left} y={top}
-        width={width} height={height}
-        xlinkHref={"./res/" + item.getTextureName()}/>
+      <image className="itemstack"
+        x={left} y={top} width={width} height={height}
+        xlinkHref={TEXTURE_DIR + item.getTextureName()}/>
     </g>;
   }
 }
 
-export default ItemComponent;
-export const PADDING = 2;
+export default ItemRenderer;

@@ -1,0 +1,39 @@
+.screen-container {
+  /*outline: 2px dashed rgba(0,0,0,0.3);*/
+}
+
+.screen-title {
+  padding-left: 10px;
+}
+
+.screen-view {
+  display: block;
+  margin: auto;
+
+  background: black;
+}
+
+.screen-error {
+  display: none;
+
+  padding: 10px;
+  color: white;
+}
+
+@media only screen and (max-width: 660px) {
+  .screen-view {
+    display: none;
+  }
+  .screen-error{
+    display: block;
+  }
+}
+
+@media only screen and (max-height: 480px) {
+  .screen-view {
+    display: none;
+  }
+  .screen-error{
+    display: block;
+  }
+}
