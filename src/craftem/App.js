@@ -33,6 +33,7 @@ class App extends React.Component
       new ContainerScreen("Enchanting", this.cursor)
     ];
     this.screenIndex = 0;
+    this.cursor.setScreen(this.getActiveContainerScreen());
 
     const playerInventory = new Container(7, 9);
     playerInventory.addItemStack(new ItemStack(Items.TOUGH_FIBER));
@@ -81,7 +82,7 @@ class App extends React.Component
     }
 
     this.toolbarItemElement = null;
-    
+
     this.onClick = this.onClick.bind(this);
     this.onToolbarItemAdd = this.onToolbarItemAdd.bind(this);
   }
@@ -115,6 +116,8 @@ class App extends React.Component
     {
       throw new Error("Unhandled click event");
     }
+
+    this.cursor.setScreen(this.getActiveContainerScreen());
   }
 
   onToolbarItemAdd(e)

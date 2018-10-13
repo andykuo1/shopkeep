@@ -12,6 +12,11 @@ class ContainerScreen
     this.targetSlots = [];
   }
 
+  onStart()
+  {
+    this.cursor.setScreen(this);
+  }
+
   onMouseDown(e)
   {
     const x = e.clientX;
@@ -132,6 +137,11 @@ class ContainerScreen
       }
     }
     return false;
+  }
+
+  getMainContainer()
+  {
+    return this.elements[0].getContainer();
   }
 
   getContainerByIndex(index)

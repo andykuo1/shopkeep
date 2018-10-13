@@ -28,7 +28,11 @@ class Container
     {
       this._slots[i] = undefined;
     }
+
+    this.onContainerUpdate();
   }
+
+  onContainerUpdate() {}
 
   interact(cursor, slotIndex)
   {
@@ -38,7 +42,14 @@ class Container
     //Pick it up...
     if (typeof slot == 'object')
     {
-      if (cursor.isPrecisionMode())
+      if (cursor.isControlMode())
+      {
+        this.removeItemStack(itemStack, slotIndex);
+        const result = cursor.getMainContainer().addItemStack(itemStack, -1);
+        this.addItemStack(itemStack, slotIndex);
+        return result;
+      }
+      else if (cursor.isPrecisionMode())
       {
         if (this.removeItemStack(itemStack, slotIndex, Math.ceil(slot.getItemStack().getStackSize() / 2)))
         {
@@ -63,7 +74,7 @@ class Container
     return false;
   }
 
-  addItemStack(itemStack, slotIndex=-1, replace=false, merge=false, autofill=true)
+  addItemStack(itemStack, slotIndex=-1, replace=false, merge=(slotIndex < 0), autofill=true)
   {
     //Ignore empty itemstacks
     if (itemStack.isEmpty()) return false;
@@ -85,6 +96,9 @@ class Container
       if (merge)
       {
         result |= this.tryMergeItemStack(itemStack);
+
+        this.onContainerUpdate();
+
         if (itemStack.isEmpty()) return true;
       }
     }
@@ -92,6 +106,9 @@ class Container
     {
       //Prioritize slotIndex first!
       result |= this.tryPlaceItemStack(itemStack, slotIndex, replace, merge);
+
+      this.onContainerUpdate();
+
       if (itemStack.isEmpty()) return true;
     }
 
@@ -99,6 +116,9 @@ class Container
     if (autofill)
     {
       result |= this.tryFillItemStack(itemStack, false);
+
+      this.onContainerUpdate();
+
       if (itemStack.isEmpty()) return true;
     }
 
@@ -261,6 +281,8 @@ class Container
           amount -= itemStack.getStackSize() - stackSize;
           if (amount <= 0)
           {
+            this.onContainerUpdate();
+
             return true;
           }
         }
@@ -276,6 +298,9 @@ class Container
         if (itemStack.join(slotStack, amount))
         {
           if (slotStack.isEmpty()) this.removeSlot(slotIndex);
+
+          this.onContainerUpdate();
+
           return true;
         }
       }

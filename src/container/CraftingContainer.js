@@ -13,10 +13,8 @@ class CraftingContainer extends Container
   }
 
   //Override
-  interact(cursor, slotIndex)
+  onContainerUpdate()
   {
-    super.interact(cursor, slotIndex);
-
     this.outputContainer.onCraftingUpdate(this);
   }
 
@@ -68,7 +66,6 @@ export class CraftingOutputContainer extends SlotContainer
       const result = recipe.applyRecipe(this.inputContainer);
       if (result)
       {
-        //cursor.setEquippedItemStack(result);
         return true;
       }
     }

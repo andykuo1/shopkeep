@@ -7,6 +7,24 @@ class ContainerCursor
   {
     this._itemStack = new ItemStack();
     this._precision = false;
+    this._control = false;
+
+    this._screen = null;
+  }
+
+  setScreen(screen)
+  {
+    this._screen = screen;
+  }
+
+  getScreen()
+  {
+    return this._screen;
+  }
+
+  getMainContainer()
+  {
+    return this._screen.getMainContainer();
   }
 
   setPrecisionMode(enabled)
@@ -17,6 +35,16 @@ class ContainerCursor
   isPrecisionMode()
   {
     return this._precision;
+  }
+
+  setControlMode(enabled)
+  {
+    this._control = enabled;
+  }
+
+  isControlMode()
+  {
+    return this._control;
   }
 
   getEquippedItemStack()

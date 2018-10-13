@@ -81,6 +81,12 @@ class ContainerScreenRenderer extends React.Component
     if (e.key == "Shift")
     {
       this.props.target.getCursor().setPrecisionMode(true);
+      return false;
+    }
+    else if (e.key == "Alt")
+    {
+      this.props.target.getCursor().setControlMode(true);
+      return false;
     }
   }
 
@@ -89,6 +95,12 @@ class ContainerScreenRenderer extends React.Component
     if (e.key == "Shift")
     {
       this.props.target.getCursor().setPrecisionMode(false);
+      return false;
+    }
+    else if (e.key == "Alt")
+    {
+      this.props.target.getCursor().setControlMode(false);
+      return false;
     }
   }
 
