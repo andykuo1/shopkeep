@@ -165,7 +165,7 @@ class Container
             else
             {
               //Just give up.
-              return itemStack;
+              return false;
             }
 
             //Skip the current item
@@ -187,12 +187,13 @@ class Container
     {
       itemStack.swap(willReplace.getItemStack());
       willReplace.update(slotIndex);
+      return true;
     }
     else
     {
       this.addSlot(slotIndex, itemStack);
+      return true;
     }
-    return true;
   }
 
   tryFillItemStack(itemStack, merge=true)
