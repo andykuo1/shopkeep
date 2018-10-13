@@ -161,6 +161,11 @@ class CraftingRecipe
       }
 
       ++x;
+      //Going to next line without reading newline
+      if (x > containerWidth)
+      {
+        return null;
+      }
     }
 
     //Out of symbols...

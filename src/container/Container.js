@@ -42,14 +42,7 @@ class Container
     //Pick it up...
     if (typeof slot == 'object')
     {
-      if (cursor.isControlMode())
-      {
-        this.removeItemStack(itemStack, slotIndex);
-        const result = cursor.getMainContainer().addItemStack(itemStack, -1);
-        this.addItemStack(itemStack, slotIndex);
-        return result;
-      }
-      else if (cursor.isPrecisionMode())
+      if (cursor.isPrecisionMode())
       {
         if (this.removeItemStack(itemStack, slotIndex, Math.ceil(slot.getItemStack().getStackSize() / 2)))
         {

@@ -22,11 +22,6 @@ class ContainerCursor
     return this._screen;
   }
 
-  getMainContainer()
-  {
-    return this._screen.getMainContainer();
-  }
-
   setPrecisionMode(enabled)
   {
     this._precision = enabled;

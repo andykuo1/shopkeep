@@ -41,7 +41,21 @@ class ContainerScreen
     const x = e.clientX;
     const y = e.clientY;
 
-    if (this.targetSlots.length == 1)
+    if (this.cursor.isControlMode())
+    {
+      const targetContainer = this.getMainContainer();
+      const itemStack = new ItemStack();
+      for(const slot of this.targetSlots)
+      {
+        const container = slot.container;
+        const index = slot.index;
+        container.removeItemStack(itemStack, index);
+        targetContainer.addItemStack(itemStack);
+        container.addItemStack(itemStack, index);
+        itemStack.clear();
+      }
+    }
+    else if (this.targetSlots.length == 1)
     {
       this.targetSlots[0].container.interact(this.cursor, this.targetSlots[0].index);
     }
