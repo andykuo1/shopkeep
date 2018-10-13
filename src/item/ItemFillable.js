@@ -9,9 +9,6 @@ class ItemFillable extends Item
 
     this.containerItem = containerItem;
     this.maxFillAmount = 1;
-
-    //Override
-    this._maxStackSize = 1;
   }
 
   setMaxFillAmount(amount)
@@ -23,27 +20,24 @@ class ItemFillable extends Item
   //Override
   onCraftResult(itemStack, itemSlot, craftingContainer, recipe, resultItem)
   {
-    const metadata = itemStack.getMetadata() + 1;
-    if (metadata >= this.maxFillAmount)
+    super.onCraftResult(itemStack, itemSlot, craftingContainer, recipe, resultItem);
+    /*
+    const metadata = itemStack.getMetadata();
+    if (metadata.fillAmount >= this.maxFillAmount)
     {
-      const newStackSize = itemStack.getStackSize() - 1;
-      if (newStackSize <= 0)
+      itemStack.pop(1);
+      if (itemSlot.isEmpty())
       {
         craftingContainer.removeSlot(itemSlot.getRootIndex());
       }
-      else
-      {
-        itemStack.setStackSize(newStackSize);
-      }
-      craftingContainer.addItemStack(new ItemStack(this.containerItem), itemSlot.getRootIndex(), false);
 
-      //Reset metadata?
-      itemStack.setMetadata(0);
+      craftingContainer.addItemStack(new ItemStack(this.containerItem), itemSlot.getRootIndex(), false);
     }
     else
     {
-      itemStack.setMetadata(metadata);
+      metadata.fillAmount = (metadata.fillAmount || 0) + 1;
     }
+    */
   }
 
   getMaxFillAmount()

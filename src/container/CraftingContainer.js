@@ -43,35 +43,20 @@ export class CraftingOutputContainer extends SlotContainer
     const itemStack = cursor.getEquippedItemStack();
     const slot = this._slots[0];
 
-    //If holding something...
-    if (itemStack)
+    //Picking up...
+    if (typeof slot == 'object')
     {
-      //Picking up by merging...
-      if (typeof slot == 'object')
+      const slotStack = slot.getItemStack();
+      if (itemStack.join(slotStack, slotStack.getStackSize(), Infinity, false))
       {
-        const result = itemStack.merge(slot.getItemStack(), Infinity, false);
-        if (result && result.isEmpty())
-        {
-          this.removeSlot(0);
-
-          this.onCraft(cursor, 0);
-        }
-      }
-    }
-    //If holding nothing...
-    else
-    {
-      //Pick it up...
-      if (typeof slot == 'object')
-      {
-        const result = slot.getItemStack();
-        cursor.setEquippedItemStack(result);
+        //ItemStack in the slot is assumed to have emptied
         this.removeSlot(0);
 
         this.onCraft(cursor, 0);
+
+        this.onCraftingUpdate(this.inputContainer);
       }
     }
-    this.onCraftingUpdate(this.inputContainer);
   }
 
   //Override
@@ -83,7 +68,7 @@ export class CraftingOutputContainer extends SlotContainer
       const result = recipe.applyRecipe(this.inputContainer);
       if (result)
       {
-        cursor.setEquippedItemStack(result);
+        //cursor.setEquippedItemStack(result);
         return true;
       }
     }
@@ -93,6 +78,7 @@ export class CraftingOutputContainer extends SlotContainer
   onCraftingUpdate(container)
   {
     this.clear();
+
     const recipes = CraftingRegistry.getRecipes();
     for(let recipe of recipes)
     {

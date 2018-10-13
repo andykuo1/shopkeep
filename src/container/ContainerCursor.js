@@ -1,8 +1,11 @@
+import SlotContainer from './SlotContainer.js';
+import ItemStack from 'item/ItemStack.js';
+
 class ContainerCursor
 {
   constructor()
   {
-    this._itemStack = null;
+    this._itemStack = new ItemStack();
     this._precision = false;
   }
 
@@ -14,18 +17,6 @@ class ContainerCursor
   isPrecisionMode()
   {
     return this._precision;
-  }
-
-  setEquippedItemStack(itemStack)
-  {
-    this._itemStack = itemStack;
-  }
-
-  removeEquippedItemStack()
-  {
-    const prev = this._itemStack;
-    this._itemStack = null;
-    return prev;
   }
 
   getEquippedItemStack()

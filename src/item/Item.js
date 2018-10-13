@@ -57,17 +57,9 @@ class Item
 
   onCraftResult(itemStack, itemSlot, craftingContainer, recipe, resultItem)
   {
-    const newStackSize = itemStack.getStackSize() - 1;
-    if (newStackSize <= 0)
-    {
-      craftingContainer.removeSlot(itemSlot.getRootIndex());
-    }
-    else
-    {
-      itemStack.setStackSize(newStackSize);
-    }
+    itemStack.pop(1);
   }
-
+  
   getWidth()
   {
     return this._width;

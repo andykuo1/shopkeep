@@ -14,6 +14,14 @@ class SlotContainer extends Container
   }
 
   //Override
+  clear()
+  {
+    this._slot.clear();
+    
+    super.clear();
+  }
+
+  //Override
   interact(cursor, slotIndex=0)
   {
     //Ignores slotIndex...
@@ -33,7 +41,7 @@ class SlotContainer extends Container
     if (typeof slot == 'object')
     {
       //Try merging both itemstacks...
-      if (merge && slot.getItemStack().merge(itemStack, this._capacity))
+      if (merge && slot.getItemStack().join(itemStack, Infinity, this._capacity))
       {
         //If completely merged, we done it! Success!
         if (itemStack.isEmpty()) return null;
@@ -64,7 +72,8 @@ class SlotContainer extends Container
   {
     //Ignores slotIndex...
     const result = this._slot;
-    result.setItemStack(itemStack);
+    result.getItemStack().join(itemStack);
+    result.update();
     this._slotsOnly.add(result);
     return result;
   }
@@ -133,55 +142,20 @@ export class SlotContainerSlot extends ContainerSlot
   //Override
   clear()
   {
-    if (!this._itemStack) return;
-
     //Remove from the container's slots
     const container = this._parent;
     container._slots[0] = undefined;
 
     //Reset values
-    this._itemStack = null;
+    this._itemStack.clear();
     this._width = 0;
     this._height = 0;
   }
 
   //Override
-  move(slotIndex, newItemStack=null)
+  update(slotIndex=0)
   {
-    const itemStack = this._itemStack;
-    if (itemStack)
-    {
-      //Clear from previous position in the container's slots
-      this.clear();
-    }
-
-    //Index will never change, making this the same as setItemStack()
-
-    //Set to new position in the container's slots
-    this.setItemStack(newItemStack || itemStack);
-    return itemStack;
-  }
-
-  //Override
-  setItemStack(itemStack)
-  {
-    const prev = this._itemStack;
-
-    if (!itemStack)
-    {
-      this.clear();
-      return prev;
-    }
-
-    const container = this._parent;
-    const item = itemStack.getItem();
-
-    //Add to the container's slots
-    container._slots[0] = this;
-
-    this._itemStack = itemStack;
-    this._width = item.getWidth();
-    this._height = item.getHeight();
-    return prev;
+    //Index will never change, making this the same as update()
+    return super.update(0);
   }
 }

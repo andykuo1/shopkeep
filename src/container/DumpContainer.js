@@ -9,8 +9,11 @@ class DumpContainer extends SlotContainer
 
   tryDumpItemStack(itemStack)
   {
+    if (itemStack.isEmpty()) return false;
+
     //Just consume everything
-    return null;
+    itemStack.clear();
+    return true;
   }
 
   //Override

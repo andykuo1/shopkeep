@@ -19,7 +19,7 @@ class ItemStackRenderer extends React.Component
   render()
   {
     const itemStack = this.props.target;
-    if (!(itemStack instanceof ItemStack)) return null;
+    if (!(itemStack instanceof ItemStack) || itemStack.isEmpty()) return null;
 
     const isEmbedded = this.props.embedded;
 

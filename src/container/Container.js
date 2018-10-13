@@ -35,54 +35,46 @@ class Container
     const itemStack = cursor.getEquippedItemStack();
     const slot = this._slots[slotIndex];
 
-    //If holding something...
-    if (itemStack)
+    //Pick it up...
+    if (typeof slot == 'object')
     {
-      //Try putting down...
-      const result = this.addItemStack(itemStack, slotIndex, true, true, false);
-      cursor.setEquippedItemStack(result);
-    }
-    //If holding nothing...
-    else
-    {
-      //Pick it up...
-      if (typeof slot == 'object')
+      if (cursor.isPrecisionMode())
       {
-        const result = slot.getItemStack();
-        if (cursor.isPrecisionMode())
+        if (this.removeItemStack(itemStack, slotIndex, Math.ceil(slot.getItemStack().getStackSize() / 2)))
         {
-          const newAmount = Math.ceil(result.getStackSize() / 2);
-          const newStackSize = result.getStackSize() - newAmount;
-          if (newStackSize > 0)
-          {
-            cursor.setEquippedItemStack(result.split(newAmount));
-            return;
-          }
-          else
-          {
-            cursor.setEquippedItemStack(result);
-            this.removeSlot(slotIndex);
-          }
+          return true;
         }
-        else
+      }
+      else
+      {
+        if (this.removeItemStack(itemStack, slotIndex))
         {
-          cursor.setEquippedItemStack(result);
-          this.removeSlot(slotIndex);
+          return true;
         }
       }
     }
+
+    if (!itemStack.isEmpty())
+    {
+      //Try putting down...
+      return this.addItemStack(itemStack, slotIndex, true, true, false);
+    }
+
+    return false;
   }
 
   addItemStack(itemStack, slotIndex=-1, replace=false, merge=false, autofill=true)
   {
     //Ignore empty itemstacks
-    if (itemStack.isEmpty()) return null;
+    if (itemStack.isEmpty()) return false;
 
     const item = itemStack.getItem();
     const itemWidth = item.getWidth();
     const itemHeight = item.getHeight();
     const containerWidth = this._width;
     const containerHeight = this._height;
+
+    let result = false;
 
     if (slotIndex < 0)
     {
@@ -92,37 +84,40 @@ class Container
       //If allowed...
       if (merge)
       {
-        itemStack = this.tryMergeItemStack(itemStack);
-        if (!itemStack) return null;
+        result |= this.tryMergeItemStack(itemStack);
+        if (itemStack.isEmpty()) return true;
       }
     }
     else
     {
       //Prioritize slotIndex first!
-      itemStack = this.tryPlaceItemStack(itemStack, slotIndex, replace, merge);
-      if (!itemStack) return null;
+      result |= this.tryPlaceItemStack(itemStack, slotIndex, replace, merge);
+      if (itemStack.isEmpty()) return true;
     }
 
     //Try autofill the item if able to
     if (autofill)
     {
-      itemStack = this.tryFillItemStack(itemStack, false);
-      if (!itemStack) return null;
+      result |= this.tryFillItemStack(itemStack, false);
+      if (itemStack.isEmpty()) return true;
     }
 
-    return itemStack;
+    return result;
   }
 
   tryMergeItemStack(itemStack)
   {
+    let result = false;
     for(const slot of this._slotsOnly)
     {
-      if (slot.getItemStack().merge(itemStack, this._capacity) && itemStack.isEmpty())
+      if (slot.getItemStack().join(itemStack, Infinity, this._capacity))
       {
-        return null;
+        result = true;
+
+        if (itemStack.isEmpty()) return true;
       }
     }
-    return itemStack;
+    return result;
   }
 
   tryPlaceItemStack(itemStack, slotIndex, replace=false, merge=true)
@@ -137,7 +132,7 @@ class Container
     slotIndex = this.checkBounds(slotIndex, itemWidth, itemHeight);
 
     //Item dimensions exceeds bounds
-    if (slotIndex < 0) return itemStack;
+    if (slotIndex < 0) return false;
 
     //Check collision with other slots
     let willReplace = undefined;
@@ -152,9 +147,9 @@ class Container
         if (typeof slot == 'object')
         {
           //Try merging both itemstacks...
-          if (merge && slot.getItemStack().merge(itemStack, this._capacity))
+          if (merge && slot.getItemStack().join(itemStack, Infinity, this._capacity))
           {
-            return itemStack.isEmpty() ? null : itemStack;
+            return true;
           }
           //If have not yet attempted to replace anything...
           else if (replace)
@@ -162,7 +157,6 @@ class Container
             if (willReplace == undefined)
             {
               willReplace = slot;
-
             }
             else if (willReplace === slot)
             {
@@ -181,7 +175,7 @@ class Container
           else
           {
             //Just give up :(
-            return itemStack;
+            return false;
           }
         }
       }
@@ -189,16 +183,16 @@ class Container
 
     //Should only get here if itemstack can be put down at slot index
     //(either by replacement or placement)
-    let result = null;
     if (typeof willReplace == 'object')
     {
-      result = willReplace.move(slotIndex, itemStack);
+      itemStack.swap(willReplace.getItemStack());
+      willReplace.update(slotIndex);
     }
     else
     {
       this.addSlot(slotIndex, itemStack);
     }
-    return result;
+    return true;
   }
 
   tryFillItemStack(itemStack, merge=true)
@@ -215,7 +209,7 @@ class Container
     {
       //Don't check borders
       if ((i % containerWidth) + itemWidth > containerWidth) continue;
-      if (Math.floor(i / containerHeight) + itemHeight > containerHeight) continue;
+      if (Math.ceil(i / containerHeight) + itemHeight + 1 > containerHeight) continue;
 
       slot = this._slots[i];
 
@@ -223,10 +217,10 @@ class Container
       if (typeof slot == 'object')
       {
         //Try merging both itemstacks...
-        if (merge && slot.getItemStack().merge(itemStack, this._capacity))
+        if (merge && slot.getItemStack().join(itemStack, Infinity, this._capacity))
         {
           //If completely merged, we done it! Success!
-          if (itemStack.isEmpty()) return null;
+          if (itemStack.isEmpty()) return true;
 
           //Otherwise, just continue...
         }
@@ -240,7 +234,7 @@ class Container
       {
         //Found empty space! Success!
         this.addSlot(i, itemStack);
-        return null;
+        return true;
       }
       else
       {
@@ -249,13 +243,43 @@ class Container
       }
     }
 
-    return itemStack;
+    return false;
   }
 
-  putItemStack(itemStack, slotIndex=0, replace=true)
+  removeItemStack(itemStack, slotIndex=-1, amount=Infinity)
   {
-    if (slotIndex < 0) throw new Error("Cannot autofill itemstack for putItemStack(); use addItemStack() instead");
-    return this.addItemStack(itemStack, slotIndex, replace, false);
+    if (slotIndex < 0)
+    {
+      for(const slot of this._slotsOnly)
+      {
+        const stackSize = itemStack.getStackSize();
+        const slotStack = slot.getItemStack();
+        if (itemStack.join(slotStack, amount))
+        {
+          if (slotStack.isEmpty()) this.removeSlot(slot.getRootIndex());
+          amount -= itemStack.getStackSize() - stackSize;
+          if (amount <= 0)
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    else
+    {
+      const slot = this._slots[slotIndex];
+      if (typeof slot == 'object')
+      {
+        const slotStack = slot.getItemStack();
+        if (itemStack.join(slotStack, amount))
+        {
+          if (slotStack.isEmpty()) this.removeSlot(slotIndex);
+          return true;
+        }
+      }
+      return false;
+    }
   }
 
   getItemStack(slotIndex=0)
@@ -267,7 +291,8 @@ class Container
   addSlot(slotIndex, itemStack)
   {
     const result = new ContainerSlot(this, slotIndex);
-    result.setItemStack(itemStack);
+    result.getItemStack().join(itemStack);
+    result.update();
     this._slotsOnly.add(result);
     return result;
   }
@@ -337,11 +362,6 @@ class Container
   getSlotCapacity()
   {
     return this._capacity;
-  }
-
-  isEditable()
-  {
-    return this._canPlace && this._canExtract;
   }
 
   //Interactible container width
