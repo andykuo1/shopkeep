@@ -59,47 +59,62 @@ class ContainerScreen
     {
       this.targetSlots[0].container.interact(this.cursor, this.targetSlots[0].index);
     }
-    else
+    else if (this.targetSlots.length > 0)
     {
-      //Split the items among the available space...
       const cursorStack = this.cursor.getEquippedItemStack();
-      if (!cursorStack.isEmpty())
+      const targetSlot = this.targetSlots[0];
+      if (targetSlot.container.isEmptySlot(targetSlot.index))
       {
-        const result = [];
-        const itemStack = new ItemStack();
-        itemStack.join(cursorStack, 1);
+        //Split the items among the available space...
+        if (!cursorStack.isEmpty())
+        {
+          const result = [];
+          const itemStack = new ItemStack();
+          itemStack.join(cursorStack, 1);
 
+          for(const slot of this.targetSlots)
+          {
+            const container = slot.container;
+            const index = slot.index;
+
+            //TODO: Allow it to merge with existing items, but not itself...
+            if (container.addItemStack(itemStack, index, false, false, false))
+            {
+              result.push(slot);
+
+              if (!cursorStack.isEmpty())
+              {
+                itemStack.join(cursorStack, 1);
+              }
+              else
+              {
+                //No more of the itemstack to split...
+                break;
+              }
+            }
+          }
+
+          //Return any remaining back into the cursor itemstack...
+          if (!itemStack.isEmpty()) cursorStack.join(itemStack);
+
+          if (!cursorStack.isEmpty())
+          {
+            const stackSize = cursorStack.getStackSize();
+            const splitSize = Math.floor(stackSize / result.length);
+            const remaining = stackSize - (splitSize * result.length);
+            //TODO: Somehow split the remaining...
+          }
+        }
+      }
+      //Pick up all possible selected items...
+      else
+      {
         for(const slot of this.targetSlots)
         {
           const container = slot.container;
           const index = slot.index;
 
-          //TODO: Allow it to merge with existing items, but not itself...
-          if (container.addItemStack(itemStack, index, false, false, false))
-          {
-            result.push(slot);
-
-            if (!cursorStack.isEmpty())
-            {
-              itemStack.join(cursorStack, 1);
-            }
-            else
-            {
-              //No more of the itemstack to split...
-              break;
-            }
-          }
-        }
-
-        //Return any remaining back into the cursor itemstack...
-        if (!itemStack.isEmpty()) cursorStack.join(itemStack);
-
-        if (!cursorStack.isEmpty())
-        {
-          const stackSize = cursorStack.getStackSize();
-          const splitSize = Math.floor(stackSize / result.length);
-          const remaining = stackSize - (splitSize * result.length);
-          //TODO: Somehow split the remaining...
+          container.removeItemStack(cursorStack, index);
         }
       }
     }
