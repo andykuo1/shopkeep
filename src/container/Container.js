@@ -12,7 +12,14 @@ class Container
     this._slots = new Array(this._width * this._height);
     this._slotsOnly = new Set();
 
+    this._filter = null;
     this._capacity = Infinity;
+  }
+
+  setFilter(filter)
+  {
+    this._filter = filter;
+    return this;
   }
 
   setCapacity(capacity)
@@ -71,6 +78,8 @@ class Container
   {
     //Ignore empty itemstacks
     if (itemStack.isEmpty()) return false;
+    //Ignore filtered itemstacks
+    if (this._filter && this._filter(itemStack)) return false;
 
     const item = itemStack.getItem();
     const itemWidth = item.getWidth();
@@ -163,6 +172,7 @@ class Container
     return typeof slot == 'object' ? slot.getItemStack() : null;
   }
 
+  //Slot manipulation should only be used within container class
   addSlot(slotIndex, itemStack)
   {
     const result = this.createSlot(slotIndex);
@@ -172,6 +182,7 @@ class Container
     return result;
   }
 
+  //Slot manipulation should only be used within container class
   removeSlot(slotIndex)
   {
     const slot = this._slots[slotIndex];
@@ -183,6 +194,7 @@ class Container
     return slot;
   }
 
+  //Slot manipulation should only be used within container class
   createSlot(slotIndex)
   {
     return new ContainerSlot(this, slotIndex);

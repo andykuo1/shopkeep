@@ -1,6 +1,7 @@
 import ContainerScreen from './ContainerScreen.js';
 
 import SlotContainer from 'container/SlotContainer.js';
+import OutputSlotContainer from 'container/OutputSlotContainer.js';
 import DumpContainer from 'container/DumpContainer.js';
 
 class SmeltingScreen extends ContainerScreen
@@ -15,7 +16,7 @@ class SmeltingScreen extends ContainerScreen
     const furnaceX = 244;
     this.addContainer(new SlotContainer(3, 2), furnaceX, 10);
     this.addContainer(new SlotContainer(3, 2), furnaceX, 138);
-    this.addContainer(new SlotContainer(3, 2), furnaceX, 340 - 74);
+    this.addContainer(new OutputSlotContainer(), furnaceX, 340 - 74);
 
     const smelteryX = 350;
     this.addContainer(new SlotContainer(3, 2), smelteryX, 10);
