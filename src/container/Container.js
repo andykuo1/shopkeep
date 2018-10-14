@@ -79,7 +79,7 @@ class Container
     //Ignore empty itemstacks
     if (itemStack.isEmpty()) return false;
     //Ignore filtered itemstacks
-    if (this._filter && this._filter(itemStack)) return false;
+    if (this._filter && !this._filter(itemStack)) return false;
 
     const item = itemStack.getItem();
     const itemWidth = item.getWidth();
