@@ -56,8 +56,7 @@ export class CraftingOutputContainer extends SlotContainer
       }
     }
   }
-
-  //Override
+  
   onCraft(cursor, slotIndex)
   {
     const recipes = CraftingRegistry.getRecipes();

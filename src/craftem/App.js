@@ -6,7 +6,7 @@ import ContainerScreenRenderer from './components/ContainerScreenRenderer.js';
 import ItemSelector from './components/ItemSelector.js';
 import CraftingList from './components/CraftingList.js';
 
-import ContainerScreen from 'container/ContainerScreen.js';
+import ContainerScreen from 'screen/ContainerScreen.js';
 import ContainerCursor from 'container/ContainerCursor.js';
 
 import Container from 'container/Container.js';

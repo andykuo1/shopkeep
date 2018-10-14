@@ -12,11 +12,6 @@ class ContainerScreen
     this.targetSlots = [];
   }
 
-  onStart()
-  {
-    this.cursor.setScreen(this);
-  }
-
   onMouseDown(e)
   {
     const x = e.clientX;
