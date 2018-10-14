@@ -6,12 +6,13 @@ import ContainerScreenRenderer from './components/ContainerScreenRenderer.js';
 import ItemSelector from './components/ItemSelector.js';
 import CraftingList from './components/CraftingList.js';
 
-import ContainerScreen from 'screen/ContainerScreen.js';
 import ContainerCursor from 'container/ContainerCursor.js';
+import ContainerScreen from 'screen/ContainerScreen.js';
 
 import Container from 'container/Container.js';
-import CraftingContainer from 'container/CraftingContainer.js';
+import SlotContainer from 'container/SlotContainer.js';
 import DumpContainer from 'container/DumpContainer.js';
+import CraftingContainer from 'container/CraftingContainer.js';
 
 import * as Items from './Items.js';
 import ItemRegistry from 'item/ItemRegistry.js';
@@ -22,6 +23,10 @@ class App extends React.Component
   constructor(props)
   {
     super(props);
+
+    const playerInventory = new Container(7, 9);
+    playerInventory.addItemStack(new ItemStack(Items.OAK_LOG, 4));
+    playerInventory.addItemStack(new ItemStack(Items.TOUGH_FIBER, 64));
 
     this.cursor = new ContainerCursor();
     this.screens = [
@@ -34,10 +39,6 @@ class App extends React.Component
     ];
     this.screenIndex = 0;
     this.cursor.setScreen(this.getActiveContainerScreen());
-
-    const playerInventory = new Container(7, 9);
-    playerInventory.addItemStack(new ItemStack(Items.OAK_LOG, 4));
-    playerInventory.addItemStack(new ItemStack(Items.TOUGH_FIBER, 64));
 
     //Crafting
     {
@@ -55,6 +56,7 @@ class App extends React.Component
     {
       const screen = this.screens[1];
       screen.addContainer(playerInventory, 10, 10);
+      screen.addContainer(new SlotContainer(), 244, 10);
     }
 
     //Cauldron
