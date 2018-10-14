@@ -18,7 +18,7 @@ class SlotContainer extends Container
   }
 
   //Override
-  addItemStack(itemStack, slotIndex, replace=false, merge=(slotIndex < 0), autofill)
+  addItemStack(itemStack, slotIndex, replace=false, merge=(slotIndex < 0), autofill=false)
   {
     return super.addItemStack(itemStack, 0, replace, merge, false);
   }
@@ -62,15 +62,15 @@ class SlotContainer extends Container
   //Override
   isEmptySlot(slotIndex, width=1, height=1)
   {
-    if (width >= this.maxItemWidth) return false;
-    if (height >= this.maxItemHeight) return false;
+    if (width > this._maxItemWidth) return false;
+    if (height > this._maxItemHeight) return false;
     return super.isEmptySlot(0);
   }
 
   //Override
-  checkBounds(slotIndex=0, width=1, height=1)
+  findEmptySlot(slotIndex, width, height)
   {
-    return 0;
+    return this.isEmptySlot(slotIndex, width, height) ? 0 : -1;
   }
 
   //Override

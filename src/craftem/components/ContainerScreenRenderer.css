@@ -30,7 +30,7 @@
   }
 }
 
-@media only screen and (max-height: 480px) {
+@media only screen and (max-height: 490px) {
   .screen-view {
     display: none;
   }

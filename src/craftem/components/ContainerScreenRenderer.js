@@ -110,7 +110,7 @@ class ContainerScreenRenderer extends React.Component
     const target = this.props.target;
     return <div className="screen-container" onMouseDown={this.onMouseDown}>
       <h1 className="screen-title">{target.getTitle()}</h1>
-      <svg className="screen-view" width="600" height="320">
+      <svg className="screen-view" width={target.width} height={target.height}>
       {
         target.getContainerElements().map(e =>
           <ContainerRenderer key={e.getContainer().getID()} ref={ref=>e.setRenderer(ref)}

@@ -75,8 +75,6 @@ class Container
     const item = itemStack.getItem();
     const itemWidth = item.getWidth();
     const itemHeight = item.getHeight();
-    const containerWidth = this._width;
-    const containerHeight = this._height;
 
     let result = false;
 
@@ -88,7 +86,7 @@ class Container
       //If allowed...
       if (merge)
       {
-        result |= this.tryMergeItemStack(itemStack);
+        result |= tryMergeItemStack(this, itemStack);
 
         this.onContainerUpdate();
 
@@ -98,7 +96,7 @@ class Container
     else
     {
       //Prioritize slotIndex first!
-      result |= this.tryPlaceItemStack(itemStack, slotIndex, replace, merge);
+      result |= tryPlaceItemStack(this, itemStack, slotIndex, replace, merge);
 
       this.onContainerUpdate();
 
@@ -108,7 +106,7 @@ class Container
     //Try autofill the item if able to
     if (autofill)
     {
-      result |= this.tryFillItemStack(itemStack, false);
+      result |= tryFillItemStack(this, itemStack, false);
 
       this.onContainerUpdate();
 
@@ -116,148 +114,6 @@ class Container
     }
 
     return result;
-  }
-
-  tryMergeItemStack(itemStack)
-  {
-    let result = false;
-    for(const slot of this._slotsOnly)
-    {
-      if (slot.getItemStack().join(itemStack, Infinity, this._capacity))
-      {
-        result = true;
-
-        if (itemStack.isEmpty()) return true;
-      }
-    }
-    return result;
-  }
-
-  tryPlaceItemStack(itemStack, slotIndex, replace=false, merge=true)
-  {
-    const containerWidth = this._width;
-
-    const item = itemStack.getItem();
-    const itemWidth = item.getWidth();
-    const itemHeight = item.getHeight();
-
-    //Make sure the itemstack's slot index would be within container bounds
-    slotIndex = this.checkBounds(slotIndex, itemWidth, itemHeight);
-
-    //Item dimensions exceeds bounds
-    if (slotIndex < 0) return false;
-
-    //Check collision with other slots
-    let willReplace = undefined;
-    let slot;
-    for(let y = 0, h = itemHeight; y < h; ++y)
-    {
-      for(let x = 0, w = itemWidth; x < w; ++x)
-      {
-        slot = this.getSlotByPosition(x, y, slotIndex);
-
-        //Found collision...
-        if (typeof slot == 'object')
-        {
-          //Try merging both itemstacks...
-          if (merge && slot.getItemStack().join(itemStack, Infinity, this._capacity))
-          {
-            return true;
-          }
-          //If have not yet attempted to replace anything...
-          else if (replace)
-          {
-            if (willReplace == undefined)
-            {
-              willReplace = slot;
-            }
-            else if (willReplace === slot)
-            {
-              //Do nothing, it's fine.
-            }
-            else
-            {
-              //Just give up.
-              return false;
-            }
-
-            //Skip the current item
-            x += slot.getWidth() - 1;
-          }
-          //If not replacing or trying to replace more than 1 itemstack...
-          else
-          {
-            //Just give up :(
-            return false;
-          }
-        }
-      }
-    }
-
-    //Should only get here if itemstack can be put down at slot index
-    //(either by replacement or placement)
-    if (typeof willReplace == 'object')
-    {
-      itemStack.swap(willReplace.getItemStack());
-      willReplace.update(slotIndex);
-      return true;
-    }
-    else
-    {
-      this.addSlot(slotIndex, itemStack);
-      return true;
-    }
-  }
-
-  tryFillItemStack(itemStack, merge=true)
-  {
-    const containerWidth = this._width;
-    const containerHeight = this._height;
-
-    const item = itemStack.getItem();
-    const itemWidth = item.getWidth();
-    const itemHeight = item.getHeight();
-
-    let slot;
-    for(let i = 0, l = this._slots.length; i < l; ++i)
-    {
-      //Don't check borders
-      if ((i % containerWidth) + itemWidth > containerWidth) continue;
-      if (Math.ceil(i / containerHeight) + itemHeight + 1 > containerHeight) continue;
-
-      slot = this._slots[i];
-
-      //Found collision...
-      if (typeof slot == 'object')
-      {
-        //Try merging both itemstacks...
-        if (merge && slot.getItemStack().join(itemStack, Infinity, this._capacity))
-        {
-          //If completely merged, we done it! Success!
-          if (itemStack.isEmpty()) return true;
-
-          //Otherwise, just continue...
-        }
-        else
-        {
-          //Skip the current item
-          i += slot.getWidth() - 1;
-        }
-      }
-      else if (this.isEmptySlot(i, itemWidth, itemHeight))
-      {
-        //Found empty space! Success!
-        this.addSlot(i, itemStack);
-        return true;
-      }
-      else
-      {
-        //Skip the non-empty space
-        i += itemWidth - 1;
-      }
-    }
-
-    return false;
   }
 
   removeItemStack(itemStack, slotIndex=-1, amount=Infinity)
@@ -344,7 +200,6 @@ class Container
 
   isEmptySlot(slotIndex, width=1, height=1)
   {
-    const containerWidth = this._width;
     let slot;
     for(let y = 0; y < height; ++y)
     {
@@ -360,6 +215,41 @@ class Container
     return true;
   }
 
+  /*
+   * Returns a valid empty slot index that is empty at slotIndex with passed-in
+   * width and height. Guaranteed to return an index where
+   * isEmptySlot(index, width, height) returns true.
+   */
+  findEmptySlot(slotIndex=-1, width=1, height=1)
+  {
+    if (slotIndex < 0)
+    {
+      throw new Error("Operation not yet supported");
+    }
+    else
+    {
+      const containerWidth = this.getWidth();
+      const containerHeight = this.getHeight();
+
+      let x = slotIndex % containerWidth;
+      let y = Math.floor(slotIndex / containerWidth);
+      if (x < 0) x = 0;
+      if (x + width > containerWidth)
+      {
+        x = containerWidth - width;
+        if (x < 0) return -1;
+      }
+      if (y < 0) y = 0;
+      if (y + height > containerHeight)
+      {
+        y = containerHeight - height;
+        if (y < 0) return -1;
+      }
+
+      return x + y * containerWidth;
+    }
+  }
+
   getSlotCapacity()
   {
     return this._capacity;
@@ -372,8 +262,8 @@ class Container
 
   checkBounds(slotIndex, width=1, height=1)
   {
-    const containerWidth = this._width;
-    const containerHeight = this._height;
+    const containerWidth = this.getWidth();
+    const containerHeight = this.getHeight();
 
     let x = slotIndex % containerWidth;
     let y = Math.floor(slotIndex / containerWidth);
@@ -412,3 +302,143 @@ class Container
 }
 
 export default Container;
+
+function tryMergeItemStack(container, itemStack)
+{
+  let result = false;
+  for(const slot of container._slotsOnly)
+  {
+    if (slot.getItemStack().join(itemStack, Infinity, container._capacity))
+    {
+      result = true;
+
+      if (itemStack.isEmpty()) return true;
+    }
+  }
+  return result;
+}
+
+function tryPlaceItemStack(container, itemStack, slotIndex, replace=false, merge=true)
+{
+  const item = itemStack.getItem();
+  const itemWidth = item.getWidth();
+  const itemHeight = item.getHeight();
+
+  //Make sure the itemstack's slot index would be within container bounds
+  slotIndex = container.findEmptySlot(slotIndex, itemWidth, itemHeight);
+
+  //Item dimensions exceeds bounds
+  if (slotIndex < 0) return false;
+
+  //Check collision with other slots
+  let willReplace = undefined;
+  let slot;
+  for(let y = 0, h = itemHeight; y < h; ++y)
+  {
+    for(let x = 0, w = itemWidth; x < w; ++x)
+    {
+      slot = container.getSlotByPosition(x, y, slotIndex);
+
+      //Found collision...
+      if (typeof slot == 'object')
+      {
+        //Try merging both itemstacks...
+        if (merge && slot.getItemStack().join(itemStack, Infinity, container._capacity))
+        {
+          return true;
+        }
+        //If have not yet attempted to replace anything...
+        else if (replace)
+        {
+          if (willReplace == undefined)
+          {
+            willReplace = slot;
+          }
+          else if (willReplace === slot)
+          {
+            //Do nothing, it's fine.
+          }
+          else
+          {
+            //Just give up.
+            return false;
+          }
+
+          //Skip the current item
+          x += slot.getWidth() - 1;
+        }
+        //If not replacing or trying to replace more than 1 itemstack...
+        else
+        {
+          //Just give up :(
+          return false;
+        }
+      }
+    }
+  }
+
+  //Should only get here if itemstack can be put down at slot index
+  //(either by replacement or placement)
+  if (typeof willReplace == 'object')
+  {
+    itemStack.swap(willReplace.getItemStack());
+    willReplace.update(slotIndex);
+    return true;
+  }
+  else
+  {
+    container.addSlot(slotIndex, itemStack);
+    return true;
+  }
+}
+
+function tryFillItemStack(container, itemStack, merge=true)
+{
+  const containerWidth = container.getWidth();
+  const containerHeight = container.getHeight();
+
+  const item = itemStack.getItem();
+  const itemWidth = item.getWidth();
+  const itemHeight = item.getHeight();
+
+  let slot;
+  for(let i = 0, l = container._slots.length; i < l; ++i)
+  {
+    //Don't check borders
+    if ((i % containerWidth) + itemWidth > containerWidth) continue;
+    if (Math.ceil(i / containerHeight) + itemHeight + 1 > containerHeight) continue;
+
+    slot = container._slots[i];
+
+    //Found collision...
+    if (typeof slot == 'object')
+    {
+      //Try merging both itemstacks...
+      if (merge && slot.getItemStack().join(itemStack, Infinity, container._capacity))
+      {
+        //If completely merged, we done it! Success!
+        if (itemStack.isEmpty()) return true;
+
+        //Otherwise, just continue...
+      }
+      else
+      {
+        //Skip the current item
+        i += slot.getWidth() - 1;
+      }
+    }
+    else if (container.isEmptySlot(i, itemWidth, itemHeight))
+    {
+      //Found empty space! Success!
+      container.addSlot(i, itemStack);
+      return true;
+    }
+    else
+    {
+      //Skip the non-empty space
+      i += itemWidth - 1;
+    }
+  }
+
+  return false;
+}

@@ -6,6 +6,8 @@ class ContainerScreen
   {
     this.title = title;
     this.elements = [];
+    this.width = 600;
+    this.height = 320 + 20;
 
     this.cursor = cursor;
 
