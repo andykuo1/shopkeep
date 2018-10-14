@@ -111,19 +111,19 @@ class CraftingRecipe
           break;
         case '.':
           //This is something already read...
-          if (!dst.includes(container.getSlot(x + y * containerWidth)))
+          if (!dst.includes(container.getSlotByPosition(x, y)))
           {
             return null;
           }
           break;
         case '_':
-          if (container.getSlot(x + y * containerWidth))
+          if (container.getSlotByPosition(x, y))
           {
             return null;
           }
           break;
         default:
-          const slot = container.getSlot(x + y * containerWidth);
+          const slot = container.getSlotByPosition(x, y);
           if (slot)
           {
             const itemStack = slot.getItemStack();

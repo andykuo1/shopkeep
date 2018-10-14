@@ -154,7 +154,7 @@ class Container
     {
       for(let x = 0, w = itemWidth; x < w; ++x)
       {
-        slot = this._slots[slotIndex + (x + y * containerWidth)];
+        slot = this.getSlotByPosition(x, y, slotIndex);
 
         //Found collision...
         if (typeof slot == 'object')
@@ -309,7 +309,7 @@ class Container
 
   addSlot(slotIndex, itemStack)
   {
-    const result = new ContainerSlot(this, slotIndex);
+    const result = this.createSlot(slotIndex);
     result.getItemStack().join(itemStack);
     result.update();
     this._slotsOnly.add(result);
@@ -327,9 +327,47 @@ class Container
     return slot;
   }
 
-  getSlot(slotIndex)
+  createSlot(slotIndex)
+  {
+    return new ContainerSlot(this, slotIndex);
+  }
+
+  getSlotByIndex(slotIndex)
   {
     return this._slots[slotIndex];
+  }
+
+  getSlotByPosition(slotX, slotY, offset=0)
+  {
+    return this.getSlotByIndex(offset + (slotX + slotY * this._width));
+  }
+
+  isEmptySlot(slotIndex, width=1, height=1)
+  {
+    const containerWidth = this._width;
+    let slot;
+    for(let y = 0; y < height; ++y)
+    {
+      for(let x = 0; x < width; ++x)
+      {
+        slot = this.getSlotByPosition(x, y, slotIndex);
+        if (typeof slot == 'object')
+        {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  getSlotCapacity()
+  {
+    return this._capacity;
+  }
+
+  getSlots()
+  {
+    return this._slotsOnly;
   }
 
   checkBounds(slotIndex, width=1, height=1)
@@ -353,34 +391,6 @@ class Container
     }
 
     return x + y * containerWidth;
-  }
-
-  isEmptySlot(slotIndex, width=1, height=1)
-  {
-    const containerWidth = this._width;
-    let slot;
-    for(let y = 0; y < height; ++y)
-    {
-      for(let x = 0; x < width; ++x)
-      {
-        slot = this._slots[slotIndex + (x + y * containerWidth)];
-        if (typeof slot == 'object')
-        {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
-  getSlots()
-  {
-    return this._slotsOnly;
-  }
-
-  getSlotCapacity()
-  {
-    return this._capacity;
   }
 
   //Interactible container width
